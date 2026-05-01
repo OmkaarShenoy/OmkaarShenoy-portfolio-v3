@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #f5ede4;
+    color: #1a1a2e;
+    font-family: var(--font-jakarta), sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+    min-height: 100vh;
+    --ascii-color: rgba(0, 0, 0, 0.34);
+    --ascii-shadow: 0 0 1px rgba(255, 255, 255, 0.25);
+  }
+
+  .dark body {
+    background-color: #0f0f10;
+    color: #ededed;
+    --ascii-color: rgba(245, 239, 229, 0.64);
+    --ascii-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ─── Scrapbook materiality ─── */
+.sticker-shadow {
+  box-shadow:
+    0 6px 20px -6px rgba(0, 0, 0, 0.18),
+    0 2px 6px -2px rgba(0, 0, 0, 0.1),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* ─── Scrap items ─── */
+.scrap-item {
+  position: absolute !important;
+  will-change: transform, opacity;
+  cursor: grab;
+  user-select: none;
+}
+
+.scrap-item:active {
+  cursor: grabbing;
+}
+
+/* ─── Grain overlay ─── */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  filter: url(#grainy);
+}
+
+/* ASCII background */
+.ascii-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  display: block;
+  overflow: hidden;
+  background: transparent;
+  opacity: 1;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+.ascii-bg pre {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  transform: none;
+  mix-blend-mode: normal;
+  color: var(--ascii-color);
+  background: transparent;
+  line-height: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  text-shadow: var(--ascii-shadow);
+}
+
+/* ─── Animations ─── */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-5px); }
+}
+
+.animate-spin-slow  { animation: spin-slow 10s linear infinite; }
+.animate-float      { animation: float 4s ease-in-out infinite; }
+
+/* ─── Logo scrap hover tooltip ─── */
+.logo-scrap:hover .logo-tooltip {
+  opacity: 1 !important;
+  scale: 1 !important;
+}
+
+.logo-scrap {
+  cursor: grab;
+}
+.logo-scrap:active {
+  cursor: grabbing;
+}

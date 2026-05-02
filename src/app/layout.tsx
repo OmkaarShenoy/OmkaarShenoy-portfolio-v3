@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Outfit, Caveat, Plus_Jakarta_Sans, Instrument_Serif } from "next/font/google";
+import fs from "fs";
+import path from "path";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import AsciiBackground from "@/components/ascii-background";
@@ -102,15 +104,37 @@ export default function RootLayout({
     "knowsAbout": ["Data Engineering", "Data Infrastructure", "Snowflake", "dbt", "Azure", "Python", "SQL", "Docker", "Kubernetes", "PostgreSQL", "MongoDB", "Java", "Software Engineering"]
   };
 
+  // Automatically get all images from public/images/backgrounds
+  const backgroundsDir = path.join(process.cwd(), "public/images/backgrounds/");
+  let backgroundImages: string[] = [];
+  
+  try {
+    const files = fs.readdirSync(backgroundsDir);
+    backgroundImages = files
+      .filter(file => /\.(jpe?g|png|webp|svg)$/i.test(file))
+      .sort()
+      .map(file => `/images/backgrounds/${file}`);
+  } catch (error) {
+    console.error("Failed to read background images directory:", error);
+    // Fallback to defaults if directory read fails
+    backgroundImages = [
+      "/images/backgrounds/neist.jpeg",
+      "/images/backgrounds/oldmanofstorr.jpeg",
+      "/images/backgrounds/fuji.png",
+    ];
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${bricolage.variable} ${outfit.variable} ${plusJakarta.variable} ${caveat.variable} ${instrumentSerif.variable} antialiased`}
-      >
+      <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+      </head>
+      <body
+        className={`${bricolage.variable} ${outfit.variable} ${plusJakarta.variable} ${caveat.variable} ${instrumentSerif.variable} antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -118,10 +142,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="grain-overlay" />
-          <div style={{ position: "relative", zIndex: 2 }}>
-            <AsciiBackground />
-          </div>
-          <div style={{ position: "relative", zIndex: 3 }}>
+          <AsciiBackground images={backgroundImages} />
+          <div style={{ position: "relative", zIndex: 10 }}>
             {children}
           </div>
           

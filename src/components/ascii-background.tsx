@@ -1,13 +1,37 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowsClockwise } from "@phosphor-icons/react";
+import { ArrowsClockwise, MapPin } from "@phosphor-icons/react";
 
-const BACKGROUND_IMAGES = [
-  "/images/backgrounds/neist.jpeg",
-  "/images/backgrounds/oldmanofstorr.jpeg",
-  "/images/backgrounds/fuji.png",
-];
+interface AsciiBackgroundProps {
+  images?: string[];
+}
+
+const parseBackgroundInfo = (path: string) => {
+  const filename = path.split('/').pop()?.split('.')[0] || "";
+  let parts = filename.split(/[_-]{2,}/);
+
+  // If the first part is just a number (e.g. 01--Location), strip it for the display
+  if (parts.length > 0 && /^\d+$/.test(parts[0])) {
+    parts = parts.slice(1);
+  }
+
+  let location = "";
+  let date = "";
+
+  if (parts.length >= 2) {
+    // Format: Location--Date or Location--Sublocation--Date
+    location = `${parts[0].replace(/[_-]/g, ' ')}${parts[1] && !parts[1].match(/^\d/) ? `, ${parts[1].replace(/[_-]/g, ' ')}` : ""}`;
+    date = parts.slice(parts[1] && !parts[1].match(/^\d/) ? 2 : 1).join('/').replace(/[\.-]/g, '/');
+  } else if (parts.length === 1) {
+    location = parts[0].replace(/[_-]/g, ' ');
+  }
+
+  return {
+    location: location.replace(/\b\w/g, l => l.toUpperCase()),
+    date
+  };
+};
 
 // Algorithm from: https://github.com/jpetitcolas/ascii-art-converter (90+ stars, battle-tested)
 // Proven open-source conversion algorithm - no custom code
@@ -29,7 +53,7 @@ const convertImageToAscii = (
   canvas.width = cols;
   canvas.height = rows;
 
-  // Draw and sample image
+  // Draw and sample image (stretching to fit as requested)
   ctx.drawImage(image, 0, 0, cols, rows);
   const imageData = ctx.getImageData(0, 0, cols, rows);
   const data = imageData.data;
@@ -56,13 +80,16 @@ const convertImageToAscii = (
   return ascii;
 };
 
-export default function AsciiBackground() {
+export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
+  // Fallback if no images provided
+  const backgroundList = images;
+
   const [ascii, setAscii] = useState("");
   const [fontSize, setFontSize] = useState(12);
   const [lineHeight, setLineHeight] = useState(10);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
-  const [displayedImage, setDisplayedImage] = useState(BACKGROUND_IMAGES[0]);
+  const [displayedImage, setDisplayedImage] = useState(backgroundList[0]);
   const [isChanging, setIsChanging] = useState(false);
   const colsRef = useRef<number>(120);
   const resizeTimer = useRef<number | null>(null);
@@ -94,7 +121,7 @@ export default function AsciiBackground() {
     const desiredRows = Math.max(60, Math.ceil(viewportHeight / baseLineHeight));
     const exactLineHeight = viewportHeight / desiredRows;
 
-    const targetUrl = BACKGROUND_IMAGES[targetIndex];
+    const targetUrl = backgroundList[targetIndex];
     const img = new Image();
     img.src = targetUrl;
     img.crossOrigin = "anonymous";
@@ -105,13 +132,13 @@ export default function AsciiBackground() {
 
         // If it's a refresh, wait for the fade-out to complete (800ms) before swapping
         const swapDelay = isRefresh ? 800 : 0;
-        
+
         setTimeout(() => {
           setAscii(output);
           setDisplayedImage(targetUrl);
           setFontSize(fontSizeFromWidth);
           setLineHeight(exactLineHeight);
-          
+
           // Small buffer before fading back in
           setTimeout(() => {
             setIsChanging(false);
@@ -129,10 +156,14 @@ export default function AsciiBackground() {
     };
   };
 
-  // Initial load
+  // Initial load - back to sequential starting at 0
   useEffect(() => {
-    generate(0, false);
-  }, []);
+    if (backgroundList.length > 0) {
+      setBgIndex(0);
+      setDisplayedImage(backgroundList[0]);
+      generate(0, false);
+    }
+  }, [backgroundList]);
 
   useEffect(() => {
     const onResize = () => {
@@ -146,12 +177,16 @@ export default function AsciiBackground() {
   }, [bgIndex]);
 
   const handleRefresh = () => {
-    if (isChanging) return;
+    if (isChanging || backgroundList.length <= 1) return;
     setIsChanging(true);
-    const nextIndex = (bgIndex + 1) % BACKGROUND_IMAGES.length;
+
+    const nextIndex = (bgIndex + 1) % backgroundList.length;
+
     setBgIndex(nextIndex);
     generate(nextIndex, true);
   };
+
+  const info = parseBackgroundInfo(displayedImage);
 
   return (
     <div className="ascii-bg" aria-hidden>
@@ -161,14 +196,14 @@ export default function AsciiBackground() {
         disabled={isChanging}
         style={{
           position: "fixed",
-          top: "1.5rem",
-          left: "1.5rem",
-          zIndex: 1001,
+          top: "1rem",
+          left: "1rem",
+          zIndex: 100000,
           background: "transparent",
           border: "none",
           padding: "0.5rem",
           cursor: isChanging ? "wait" : "pointer",
-          color: isDarkMode ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.3)",
+          color: isDarkMode ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",
           transition: "color 0.2s, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
           pointerEvents: "auto",
         }}
@@ -180,7 +215,7 @@ export default function AsciiBackground() {
         }}
         onMouseLeave={(e) => {
           if (!isChanging) {
-            e.currentTarget.style.color = isDarkMode ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.3)";
+            e.currentTarget.style.color = isDarkMode ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)";
             e.currentTarget.style.transform = "rotate(0deg)";
           }
         }}
@@ -202,49 +237,88 @@ export default function AsciiBackground() {
       </button>
 
       <div
+        id="ascii-container"
         style={{
           position: "fixed",
-          inset: 0,
+          top: 0,
+          left: 0,
           width: "100vw",
           height: "100vh",
-          maxWidth: "100vw",
-          maxHeight: "100vh",
           overflow: "hidden",
-          zIndex: 15,
           pointerEvents: "none",
+          zIndex: -1, // Force to the absolute bottom
         }}
       >
         <pre
-          aria-hidden
           style={{
-            whiteSpace: "pre",
-            fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, monospace",
-            fontSize: `${fontSize}px`,
-            lineHeight: `${lineHeight}px`,
             margin: 0,
             padding: 0,
-            display: "block",
             width: "100vw",
             height: "100vh",
+            fontSize: `${fontSize}px`,
+            lineHeight: `${lineHeight}px`,
+            fontWeight: 800,
+            fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, monospace",
+            whiteSpace: "pre",
+            display: "block",
+            color: isDarkMode ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.3)",
+            textAlign: "left",
+            position: "absolute",
+            top: 0,
+            left: 0,
             maxWidth: "100vw",
             maxHeight: "100vh",
             overflow: "hidden",
-            
+
             backgroundImage: `url('${displayedImage}')`,
             backgroundSize: "100% 100%",
+            backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
             WebkitBackgroundClip: "text",
             backgroundClip: "text",
-            color: "transparent",
             
-            opacity: isChanging ? 0 : (isDarkMode ? 0.6 : 0.7),
-            filter: isDarkMode ? "brightness(0.9) contrast(1.1)" : "none",
-            textShadow: isDarkMode ? "0 0 1px rgba(0, 0, 0, 0.4)" : "0 0 1px rgba(255, 255, 255, 0.25)",
-            transition: "opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
+            opacity: isChanging ? 0 : (isDarkMode ? 0.8 : 1.0),
+            filter: isDarkMode ? "brightness(0.9) contrast(1.1)" : "saturate(1.5) contrast(1.15) brightness(1.02)",
+            textShadow: isDarkMode ? "0 0 1px rgba(0, 0, 0, 0.1)" : "0 0 1px rgba(255, 255, 255, 0.5)",
+            transition: "opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), filter 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         >
           {ascii}
         </pre>
+      </div>
+
+      <div style={{
+        position: "fixed",
+        bottom: "1.5rem",
+        right: "1.5rem",
+        zIndex: 1000, // Safe high z-index
+        display: "flex",
+        alignItems: "center",
+        gap: "0.6rem",
+        color: isDarkMode ? "#ffffff" : "#000000",
+        fontFamily: "var(--font-instrument), serif",
+        pointerEvents: "none",
+        opacity: isChanging ? 0 : 1,
+        transition: "opacity 1s ease"
+      }}>
+        <MapPin size={14} weight="fill" style={{ opacity: 1 }} />
+        <span style={{ fontSize: "1rem", fontStyle: "italic", opacity: 1, fontWeight: 600 }}>
+          {info.location}
+        </span>
+        {info.date && (
+          <span style={{
+            fontSize: "0.9rem",
+            fontFamily: "'Courier New', Courier, monospace",
+            fontWeight: 800,
+            color: "#ff5733", // Digital camera orange
+            letterSpacing: "0.08em",
+            marginLeft: "0.5rem",
+            textShadow: "0 0 1px rgba(255, 87, 51, 0.4), 0 0 3px rgba(255, 87, 51, 0.2)",
+            opacity: 1
+          }}>
+            {info.date}
+          </span>
+        )}
       </div>
     </div>
   );

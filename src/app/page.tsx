@@ -15,10 +15,15 @@ if (typeof window !== "undefined") {
 
 export default function Home() {
   const { resolvedTheme, setTheme } = useTheme();
-  const isLightMode = resolvedTheme !== "dark";
+  const [mounted, setMounted] = useState(false);
+  const isLightMode = !mounted ? true : resolvedTheme !== "dark";
   const lampRef = useRef<HTMLButtonElement>(null);
   const cablePathRef = useRef<SVGPathElement>(null);
   const [showLogos, setShowLogos] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     // Console Easter Egg
@@ -214,18 +219,18 @@ Reach out if you are interested in the code for this website!
           <div>
             <h1 className="hero-line" style={{ opacity: 0, margin: 0, display: "block", fontSize: "clamp(3.8rem, 4vw, 8.5rem)", fontWeight: 400, fontStyle: "italic", letterSpacing: "-0.02em", lineHeight: 0.95, color: isLightMode ? "#111111" : "#EDEDED", position: "relative", fontFamily: "var(--font-instrument), serif", transition: "color 0.4s ease" }}>
               Omkaar Shenoy.
-              <span className="hero-underline" style={{ position: "absolute", bottom: "0.06em", left: 0, width: "60%", height: "1px", background: isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)", display: "block", transformOrigin: "left center", transition: "background 0.4s ease" }} />
+              <span className="hero-underline" style={{ position: "absolute", bottom: "0.06em", left: 0, width: "60%", height: "1px", background: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", display: "block", transformOrigin: "left center", transition: "background 0.4s ease" }} />
             </h1>
 
-            <div className="hero-line font-jakarta" style={{ opacity: 0, marginTop: "2rem", fontSize: "clamp(0.85rem, 1.4vw, 1.1rem)", color: isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)", fontWeight: 900, maxWidth: "48ch", lineHeight: 1.6, transition: "color 0.4s ease" }}>
+            <div className="hero-line font-jakarta" style={{ opacity: 0, marginTop: "2rem", fontSize: "clamp(0.85rem, 1.4vw, 1.1rem)", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", fontWeight: 900, maxWidth: "48ch", lineHeight: 1.6, transition: "color 0.4s ease" }}>
               I&apos;m a Data Engineer at Aramark, with previous experience at WebstaurantStore, NPR, and others.
             </div>
 
-            <div className="hero-line font-jakarta" style={{ opacity: 0, marginTop: "1rem", fontSize: "clamp(0.8rem, 1.2vw, 0.95rem)", color: isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)", fontWeight: 900, maxWidth: "48ch", lineHeight: 1.6, transition: "color 0.4s ease" }}>
+            <div className="hero-line font-jakarta" style={{ opacity: 0, marginTop: "1rem", fontSize: "clamp(0.8rem, 1.2vw, 0.95rem)", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", fontWeight: 900, maxWidth: "48ch", lineHeight: 1.6, transition: "color 0.4s ease" }}>
               My daily work involves building core data infrastructure for millions of records moving at a global scale.
             </div>
 
-            <div className="hero-line font-jakarta" style={{ opacity: 1, marginTop: "1rem", fontSize: "clamp(0.75rem, 1.1vw, 0.85rem)", color: isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)", fontWeight: 900, maxWidth: "48ch", lineHeight: 1.6, transition: "color 0.4s ease" }}>
+            <div className="hero-line font-jakarta" style={{ opacity: 1, marginTop: "1rem", fontSize: "clamp(0.75rem, 1.1vw, 0.85rem)", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", fontWeight: 900, maxWidth: "48ch", lineHeight: 1.6, transition: "color 0.4s ease" }}>
               Please reach out below for any interesting opportunities &mdash; I&apos;m always happy to talk.
             </div>
 
@@ -238,7 +243,7 @@ Reach out if you are interested in the code for this website!
                 <Envelope size={13} /> get in touch
               </a>
               <span style={{ color: isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.7)", fontSize: "0.7rem", transition: "color 0.4s ease" }}>/</span>
-              <a href="/Omkaar Shenoy_Startup_Data Engineer.pdf" target="_blank"
+              <a href="/Omkaar_Shenoy_Resume.pdf" target="_blank"
                 style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)", fontSize: "0.78rem", fontWeight: 500, fontFamily: "var(--font-jakarta)", textDecoration: "none", letterSpacing: "0.01em", borderBottom: `1px solid ${isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)"}`, paddingBottom: "1px", transition: "color 0.2s, border-color 0.2s" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "#FFFFFF"; (e.currentTarget as HTMLElement).style.borderColor = isLightMode ? "#111111" : "#FFFFFF"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)"; (e.currentTarget as HTMLElement).style.borderColor = isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)"; }}

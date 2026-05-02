@@ -381,16 +381,16 @@ Reach out if you are interested in the code for this website!
         </nav>
 
         <nav style={{ position: "fixed", bottom: "1.5rem", left: "1.5rem", zIndex: 1000, display: "flex", gap: "1rem", alignItems: "center", pointerEvents: "auto" }} aria-label="Social links">
-          <a href="https://github.com/omkaarshenoy" target="_blank" style={{ display: "flex", alignItems: "center", gap: "0.35rem", textDecoration: "none", color: isLightMode ? "rgba(17,17,17,0.5)" : "rgba(255,255,255,0.5)", transition: "color 0.2s" }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "rgba(255,255,255,0.9)"}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,0.5)" : "rgba(255,255,255,0.5)"}
+          <a href="https://github.com/omkaarshenoy" target="_blank" style={{ display: "flex", alignItems: "center", gap: "0.35rem", textDecoration: "none", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", transition: "color 0.2s" }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "rgba(255,255,255,1)"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)"}
           >
             <GithubLogo size={15} weight="fill" />
             <span className="font-jakarta" style={{ fontSize: "9px", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase" }}>github</span>
           </a>
           <a href="https://linkedin.com/in/omkaarshenoy" target="_blank" style={{ display: "flex", alignItems: "center", gap: "0.35rem", textDecoration: "none", color: isLightMode ? "rgba(17,17,17,0.5)" : "rgba(255,255,255,0.5)", transition: "color 0.2s" }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "rgba(255,255,255,0.9)"}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,0.5)" : "rgba(255,255,255,0.5)"}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "rgba(255,255,255,1)"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)"}
           >
             <LinkedinLogo size={15} weight="fill" />
             <span className="font-jakarta" style={{ fontSize: "9px", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase" }}>linkedin</span>

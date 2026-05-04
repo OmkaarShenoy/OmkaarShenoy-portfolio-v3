@@ -244,7 +244,7 @@ Reach out if you are interested in the code for this website!
         />
 
         <LogoScrap src="/images/experiences/npr-logo.png" alt="NPR"
-          initialPos={{ x: "82%", y: "22%", rotate: 5 }} size={200} tooltipDir="left"
+          initialPos={{ x: "82%", y: "15%", rotate: 5 }} size={200} tooltipDir="left"
           tooltip={{ category: "Job", title: "NPR", sub: "Scaling NPR.org", period: "Jun – Aug 2022 · Washington DC", tags: ["PHP", "HTML5", "Docker", "Kubernetes"], stat: "npr.org", statLabel: "shipped" }}
           isVisible={showLogos}
         />
@@ -276,6 +276,12 @@ Reach out if you are interested in the code for this website!
         <LogoScrap src="/images/experiences/dbt-logo.png" alt="dbt"
           initialPos={{ x: "85%", y: "35%", rotate: 4 }} size={85} tooltipDir="left"
           tooltip={{ category: "Skill", title: "dbt", sub: "Migrated raw SQL → dbt", period: "Aramark", tags: ["Models", "Tests", "Docs", "Maintainability"] }}
+          isVisible={showLogos}
+        />
+
+        <LogoScrap src="/images/experiences/eagleeyes.png" alt="EagleEyes Search"
+          initialPos={{ x: "50%", y: "15%", rotate: 2 }} size={150} tooltipDir="left"
+          tooltip={{ category: "Job", title: "EagleEyes Search", sub: "Drone Control Interface", period: "Search & Rescue Startup", tags: ["Web App", "UI", "Drones"] }}
           isVisible={showLogos}
         />
 
@@ -321,11 +327,7 @@ Reach out if you are interested in the code for this website!
           isVisible={showLogos}
         />
 
-        <LogoScrap src="/images/experiences/eagleeyes.png" alt="EagleEyes Search"
-          initialPos={{ x: "80%", y: "38%", rotate: -3 }} size={160} tooltipDir="left"
-          tooltip={{ category: "Job", title: "EagleEyes Search", sub: "Drone Control Interface", period: "Search & Rescue Startup", tags: ["Web App", "UI", "Drones"] }}
-          isVisible={showLogos}
-        />
+
 
         <PersonalScrap
           type="cutout"

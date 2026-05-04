@@ -132,7 +132,7 @@ Reach out if you are interested in the code for this website!
           <div>
             <h1 className="hero-line luxury-text" style={{ opacity: 0, margin: 0, display: "block", fontSize: "clamp(3.8rem, 4vw, 8.5rem)", position: "relative", transition: "opacity 0.4s ease" }}>
               Omkaar Shenoy.
-              <span className="hero-underline" style={{ position: "absolute", bottom: "0.06em", left: 0, width: "60%", height: "1px", background: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", display: "block", transformOrigin: "left center", transition: "background 0.4s ease" }} />
+              <span className="hero-underline" style={{ position: "absolute", bottom: "0.06em", left: 0, width: "100%", height: "1px", background: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", display: "block", transformOrigin: "left center", transition: "background 0.4s ease" }} />
             </h1>
 
             <div style={{ position: "relative" }}>
@@ -497,8 +497,8 @@ Reach out if you are interested in the code for this website!
           alt="gazella"
           tooltip={{
             category: "Volunteer",
-            title: "Phila Ship Guide",
-            sub: "building a literal ship",
+            title: "Phila Ship Guild",
+            sub: "working on a literal ship",
             period: "Gazella",
             tags: ["Sanding", "Masts", "Sailing"],
             stat: "50",

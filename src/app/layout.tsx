@@ -5,6 +5,8 @@ import path from "path";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import AsciiBackground from "@/components/ascii-background";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -104,6 +106,8 @@ export default function RootLayout({
       "@type": "Organization",
       "name": "Aramark"
     },
+    "description": "Omkaar Shenoy is a Data Engineer based in Philadelphia building data infrastructure at scale.",
+    "image": "https://omkaarshenoy.com/images/og-image.png",
     "knowsAbout": ["Data Engineering", "Data Infrastructure", "Snowflake", "dbt", "Azure", "Python", "SQL", "Docker", "Kubernetes", "PostgreSQL", "MongoDB", "Java", "Software Engineering"]
   };
 
@@ -157,6 +161,8 @@ export default function RootLayout({
             </filter>
           </svg>
         </ThemeProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

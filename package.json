@@ -18,8 +18,6 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
     "gsap": "^3.15.0",
-    "image-to-ascii-art": "^0.0.4",
-    "lucide-react": "^1.14.0",
     "next": "latest",
     "next-themes": "^0.4.6",
     "react": "latest",

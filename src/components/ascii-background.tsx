@@ -88,11 +88,35 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
   const [fontSize, setFontSize] = useState(12);
   const [lineHeight, setLineHeight] = useState(10);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [scale, setScale] = useState(1);
   const [bgIndex, setBgIndex] = useState(0);
   const [displayedImage, setDisplayedImage] = useState(backgroundList[0]);
   const [isChanging, setIsChanging] = useState(false);
   const colsRef = useRef<number>(120);
   const resizeTimer = useRef<number | null>(null);
+  const preRef = useRef<HTMLPreElement>(null);
+  const hasMounted = useRef(false);
+
+  useEffect(() => {
+    if (preRef.current && ascii) {
+      const w = preRef.current.offsetWidth;
+      const h = preRef.current.offsetHeight;
+      const container = document.getElementById("ascii-container");
+      const cw = container ? container.clientWidth : window.innerWidth;
+      const ch = container ? container.clientHeight : window.innerHeight;
+      
+      if (w > 0 && h > 0) {
+        // Calculate uniform scale to ensure max-content covers the entire viewport
+        const scaleX = cw / w;
+        const scaleY = ch / h;
+        const uniformScale = Math.max(1, Math.max(scaleX, scaleY));
+        
+        if (Math.abs(uniformScale - scale) > 0.01) {
+          setScale(uniformScale);
+        }
+      }
+    }
+  }, [ascii, fontSize, lineHeight]);
 
   useEffect(() => {
     const updateThemeState = () => {
@@ -108,18 +132,26 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
   }, []);
 
   const generate = (targetIndex: number, isRefresh = false) => {
-    const viewportWidth = Math.max(1, window.innerWidth);
-    const viewportHeight = Math.max(1, window.innerHeight);
+    const container = document.getElementById("ascii-container");
+    const viewportWidth = container ? container.clientWidth : Math.max(1, window.innerWidth);
+    const viewportHeight = container ? container.clientHeight : Math.max(1, window.innerHeight);
     const charWidthRatio = 0.6;
     const baseLineHeightRatio = 0.8;
     const targetCharWidth = Math.max(1.7, Math.min(2.6, viewportWidth / 300));
-    const desiredCols = Math.max(60, Math.ceil(viewportWidth / targetCharWidth));
-    colsRef.current = desiredCols;
-
-    const fontSizeFromWidth = viewportWidth / desiredCols / charWidthRatio;
+    const baseCols = Math.max(60, Math.ceil(viewportWidth / targetCharWidth));
+    
+    // We calculate font size to exactly fit baseCols into viewport
+    const fontSizeFromWidth = viewportWidth / baseCols / charWidthRatio;
     const baseLineHeight = fontSizeFromWidth * baseLineHeightRatio;
-    const desiredRows = Math.max(60, Math.ceil(viewportHeight / baseLineHeight));
-    const exactLineHeight = viewportHeight / desiredRows;
+    
+    // We calculate baseRows to exactly fit into viewport
+    const baseRows = Math.max(60, Math.ceil(viewportHeight / baseLineHeight));
+    const exactLineHeight = viewportHeight / baseRows;
+    
+    // Add 5% safety overscan so it never leaves gaps if Safari rounds fractional pixels down
+    const desiredCols = Math.ceil(baseCols * 1.05);
+    const desiredRows = Math.ceil(baseRows * 1.05);
+    colsRef.current = desiredCols;
 
     const targetUrl = backgroundList[targetIndex];
     const img = new Image();
@@ -156,7 +188,7 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
     };
   };
 
-  // Initial load - back to sequential starting at 0
+  // Initial load
   useEffect(() => {
     if (backgroundList.length > 0) {
       setBgIndex(0);
@@ -191,6 +223,7 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
   return (
     <div className="ascii-bg" aria-hidden>
       <button
+        className="animate-on-load"
         onClick={handleRefresh}
         title="Change Background"
         disabled={isChanging}
@@ -247,27 +280,31 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
           overflow: "hidden",
           pointerEvents: "none",
           zIndex: -1, // Force to the absolute bottom
+          WebkitMaskImage: "linear-gradient(to right, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.2) 15%, rgba(0,0,0,1) 50%)",
+          maskImage: "linear-gradient(to right, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.2)15%, rgba(0,0,0,1) 50%)",
         }}
       >
         <pre
+          ref={preRef}
           style={{
             margin: 0,
             padding: 0,
-            width: "100vw",
-            height: "100vh",
+            width: "max-content",
+            height: "max-content",
             fontSize: `${fontSize}px`,
             lineHeight: `${lineHeight}px`,
             fontWeight: 800,
             fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, monospace",
             whiteSpace: "pre",
             display: "block",
-            color: isDarkMode ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.3)",
+            color: isDarkMode ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.55)",
             textAlign: "left",
             position: "absolute",
-            top: 0,
-            left: 0,
-            maxWidth: "100vw",
-            maxHeight: "100vh",
+            top: "50%",
+            left: "50%",
+            transform: `translate(-50%, -50%) scale(${scale})`,
+            maxWidth: "none",
+            maxHeight: "none",
             overflow: "hidden",
 
             backgroundImage: `url('${displayedImage}')`,
@@ -277,9 +314,11 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
             WebkitBackgroundClip: "text",
             backgroundClip: "text",
             
-            opacity: isChanging ? 0 : (isDarkMode ? 0.8 : 1.0),
-            filter: isDarkMode ? "brightness(0.9) contrast(1.1)" : "saturate(1.5) contrast(1.15) brightness(1.02)",
-            textShadow: isDarkMode ? "0 0 1px rgba(0, 0, 0, 0.1)" : "0 0 1px rgba(255, 255, 255, 0.5)",
+            opacity: isChanging ? 0 : (isDarkMode ? 0.7 : 1.0),
+            filter: isDarkMode 
+              ? "invert(1) hue-rotate(180deg) saturate(1) contrast(1) brightness(1)" 
+              : "invert(0) hue-rotate(0deg) saturate(1.5) contrast(1.3) brightness(0.85)",
+            textShadow: isDarkMode ? "0 0 2px rgba(255, 255, 255, 0.2)" : "0 0 1px rgba(255, 255, 255, 0.5)",
             transition: "opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), filter 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         >
@@ -287,7 +326,7 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
         </pre>
       </div>
 
-      <div style={{
+      <div className="animate-on-load" style={{
         position: "fixed",
         bottom: "1.5rem",
         right: "1.5rem",

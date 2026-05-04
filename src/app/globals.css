@@ -3,7 +3,13 @@
 @tailwind utilities;
 
 @layer base {
-  *, *::before, *::after {
+  :root {
+    --font-luxury: "Editorial New", "PP Editorial Old", "Canela", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  }
+
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
@@ -12,9 +18,10 @@
   }
 
   body {
-    background-color: #f5ede4;
+    background-color: #F4F0EA;
     color: #1a1a2e;
-    font-family: var(--font-jakarta), sans-serif;
+    font-family: var(--font-luxury);
+    text-transform: lowercase;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow: hidden;
@@ -29,6 +36,77 @@
     --ascii-color: rgba(245, 239, 229, 0.64);
     --ascii-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
   }
+}
+
+/* ─── Luxury Editorial Typography ─── */
+.luxury-text,
+.luxury-subtext {
+  text-transform: lowercase;
+  font-family: "Editorial New", "PP Editorial Old", "Canela", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  font-weight: 400;
+  
+  background-image: linear-gradient(
+    170deg,
+    rgb(52, 52, 64),
+    rgb(88, 88, 100) 10%,
+    rgb(58, 58, 72) 20%,
+    rgb(100, 100, 112) 32%,
+    rgb(64, 64, 78) 42%,
+    rgb(92, 92, 106) 52%,
+    rgb(54, 54, 68) 62%,
+    rgb(86, 86, 100) 72%,
+    rgb(56, 56, 70) 82%,
+    rgb(80, 80, 94) 91%,
+    rgb(60, 60, 74)
+  );
+  
+  background-clip: text;
+  -webkit-background-clip: text;
+  
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  
+  text-shadow:
+    rgba(255,255,255,0.35) 0 -1px 0,
+    rgba(0,0,0,0.30) 0 1px 1px,
+    rgba(0,0,0,0.12) 0 3px 6px;
+    
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  text-align: left;
+  width: fit-content;
+}
+
+.luxury-text {
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+
+.luxury-subtext {
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.dark .luxury-text,
+.dark .luxury-subtext {
+  background-image: linear-gradient(
+    170deg,
+    rgb(245, 245, 248),
+    rgb(255, 255, 255) 15%,
+    rgb(240, 240, 245) 30%,
+    rgb(255, 255, 255) 50%,
+    rgb(248, 248, 250) 65%,
+    rgb(255, 255, 255) 85%,
+    rgb(235, 235, 240)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    rgba(255, 255, 255, 0.4) 0 -1px 0,
+    rgba(0, 0, 0, 0.8) 0 1px 1px,
+    rgba(0, 0, 0, 0.6) 0 3px 6px;
 }
 
 /* ─── Scrapbook materiality ─── */
@@ -75,6 +153,7 @@
   max-width: 100vw;
   max-height: 100vh;
 }
+
 .ascii-bg pre {
   margin: 0;
   padding: 0;
@@ -90,20 +169,6 @@
   text-shadow: var(--ascii-shadow);
 }
 
-/* ─── Animations ─── */
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-5px); }
-}
-
-.animate-spin-slow  { animation: spin-slow 10s linear infinite; }
-.animate-float      { animation: float 4s ease-in-out infinite; }
-
 /* ─── Logo scrap hover tooltip ─── */
 .logo-scrap:hover .logo-tooltip {
   opacity: 1 !important;
@@ -113,6 +178,17 @@
 .logo-scrap {
   cursor: grab;
 }
+
 .logo-scrap:active {
   cursor: grabbing;
+}
+
+/* ─── Initial Load Animations ─── */
+@keyframes initialFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-on-load {
+  animation: initialFadeIn 1s ease-out 0.6s backwards;
 }

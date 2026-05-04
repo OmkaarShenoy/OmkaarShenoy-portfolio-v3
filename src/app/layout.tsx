@@ -41,8 +41,11 @@ export const metadata: Metadata = {
   },
   description: "Omkaar Shenoy is a Data Engineer based in Philadelphia building data infrastructure at scale. Specialized in Snowflake, dbt, Azure, and Python.",
   keywords: ["Data Engineer", "Philadelphia", "Omkaar Shenoy", "Snowflake", "dbt", "Azure", "Python", "Data Infrastructure", "Software Engineer"],
+  icons: {
+    icon: "/images/favicon.png",
+  },
   authors: [{ name: "Omkaar Shenoy", url: "https://omkaarshenoy.com" }],
-  creator: "Omkaar Shenoy",
+  creator: "Omkaar Shenoy", 
   openGraph: {
     title: "Omkaar Shenoy | Data Engineer",
     description: "Data Engineer based in Philadelphia building data infrastructure at scale.",
@@ -107,7 +110,7 @@ export default function RootLayout({
   // Automatically get all images from public/images/backgrounds
   const backgroundsDir = path.join(process.cwd(), "public/images/backgrounds/");
   let backgroundImages: string[] = [];
-  
+
   try {
     const files = fs.readdirSync(backgroundsDir);
     backgroundImages = files
@@ -146,7 +149,7 @@ export default function RootLayout({
           <div style={{ position: "relative", zIndex: 10 }}>
             {children}
           </div>
-          
+
           <svg className="hidden">
             <filter id="grainy">
               <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />

@@ -150,7 +150,7 @@ export function PersonalScrap({
     }
   }, [isVisible, isMobile]);
 
-  const showPanel = tooltip && hovered && !isDragging;
+  const showPanel = !!(tooltip && hovered && !isDragging);
 
   return (
     <div

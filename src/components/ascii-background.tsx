@@ -35,26 +35,32 @@ const parseBackgroundInfo = (path: string) => {
 
 // Algorithm from: https://github.com/jpetitcolas/ascii-art-converter (90+ stars, battle-tested)
 // Proven open-source conversion algorithm - no custom code
-const convertImageToAscii = (
-  image: HTMLImageElement,
+const convertMediaToAscii = (
+  media: HTMLImageElement | HTMLVideoElement,
   cols: number,
   options?: { charRatio?: number; rows?: number }
 ): string => {
   const charRatio = options?.charRatio ?? 0.5;
   const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext("2d", { alpha: false }); // Optimization
   if (!ctx) return "";
 
+  // Get source dimensions
+  const sourceWidth = media instanceof HTMLVideoElement ? media.videoWidth : media.naturalWidth;
+  const sourceHeight = media instanceof HTMLVideoElement ? media.videoHeight : media.naturalHeight;
+
+  if (sourceWidth === 0 || sourceHeight === 0) return "";
+
   // Calculate dimensions
-  const scale = cols / image.naturalWidth;
-  const derivedRows = Math.ceil(image.naturalHeight * scale * charRatio);
+  const scale = cols / sourceWidth;
+  const derivedRows = Math.ceil(sourceHeight * scale * charRatio);
   const rows = Math.max(1, Math.floor(options?.rows ?? derivedRows));
 
   canvas.width = cols;
   canvas.height = rows;
 
-  // Draw and sample image (stretching to fit as requested)
-  ctx.drawImage(image, 0, 0, cols, rows);
+  // Draw and sample (stretching to fit as requested)
+  ctx.drawImage(media, 0, 0, cols, rows);
   const imageData = ctx.getImageData(0, 0, cols, rows);
   const data = imageData.data;
 
@@ -65,7 +71,7 @@ const convertImageToAscii = (
   const pixelCount = data.length / 4;
   const asciiArr = new Array(pixelCount + rows);
   let outIdx = 0;
-  
+
   for (let i = 0; i < data.length; i += 4) {
     // Calculate luminance using standard formula
     const r = data[i];
@@ -97,8 +103,11 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
   const [displayedImage, setDisplayedImage] = useState(backgroundList[0]);
   const [isChanging, setIsChanging] = useState(false);
   const colsRef = useRef<number>(120);
+  const rowsRef = useRef<number>(60); // Store rows for video loop
   const resizeTimer = useRef<number | null>(null);
   const preRef = useRef<HTMLPreElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const rafRef = useRef<number | null>(null);
   const hasMounted = useRef(false);
 
   useEffect(() => {
@@ -108,13 +117,13 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
       const container = document.getElementById("ascii-container");
       const cw = container ? container.clientWidth : window.innerWidth;
       const ch = container ? container.clientHeight : window.innerHeight;
-      
+
       if (w > 0 && h > 0) {
         // Calculate uniform scale to ensure max-content covers the entire viewport
         const scaleX = cw / w;
         const scaleY = ch / h;
         const uniformScale = Math.max(1, Math.max(scaleX, scaleY));
-        
+
         if (Math.abs(uniformScale - scale) > 0.01) {
           setScale(uniformScale);
         }
@@ -143,53 +152,95 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
     const baseLineHeightRatio = 0.8;
     const targetCharWidth = Math.max(1.7, Math.min(2.6, viewportWidth / 300));
     const baseCols = Math.max(60, Math.ceil(viewportWidth / targetCharWidth));
-    
+
     // We calculate font size to exactly fit baseCols into viewport
     const fontSizeFromWidth = viewportWidth / baseCols / charWidthRatio;
     const baseLineHeight = fontSizeFromWidth * baseLineHeightRatio;
-    
+
     // We calculate baseRows to exactly fit into viewport
     const baseRows = Math.max(60, Math.ceil(viewportHeight / baseLineHeight));
     const exactLineHeight = viewportHeight / baseRows;
-    
-    // Add 5% safety overscan so it never leaves gaps if Safari rounds fractional pixels down
+
+    // Add 5% safety overscan
     const desiredCols = Math.ceil(baseCols * 1.05);
     const desiredRows = Math.ceil(baseRows * 1.05);
     colsRef.current = desiredCols;
+    rowsRef.current = desiredRows;
 
     const targetUrl = backgroundList[targetIndex];
-    const img = new Image();
-    img.src = targetUrl;
-    img.crossOrigin = "anonymous";
+    const isVideo = /\.(mp4|webm|mov)$/i.test(targetUrl);
 
-    img.onload = () => {
-      try {
-        const output = convertImageToAscii(img, desiredCols, { rows: desiredRows, charRatio: 0.5 });
+    // Cancel existing loop
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
 
-        // If it's a refresh, wait for the fade-out to complete (800ms) before swapping
-        const swapDelay = isRefresh ? 800 : 0;
+    const swapDelay = isRefresh ? 800 : 0;
+
+    if (isVideo) {
+      const video = document.createElement("video");
+      video.src = targetUrl;
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.crossOrigin = "anonymous";
+      videoRef.current = video;
+
+      video.onloadeddata = () => {
+        video.play().catch(console.error);
+
+        const renderLoop = () => {
+          if (videoRef.current === video) {
+            const output = convertMediaToAscii(video, colsRef.current, { rows: rowsRef.current, charRatio: 0.5 });
+            setAscii(output);
+            rafRef.current = requestAnimationFrame(renderLoop);
+          }
+        };
 
         setTimeout(() => {
-          setAscii(output);
           setDisplayedImage(targetUrl);
           setFontSize(fontSizeFromWidth);
           setLineHeight(exactLineHeight);
 
-          // Small buffer before fading back in
+          // Start the loop
+          rafRef.current = requestAnimationFrame(renderLoop);
+
           setTimeout(() => {
             setIsChanging(false);
           }, 100);
         }, swapDelay);
-      } catch (error) {
-        console.error("ASCII conversion failed:", error);
-        setIsChanging(false);
-      }
-    };
+      };
+    } else {
+      const img = new Image();
+      img.src = targetUrl;
+      img.crossOrigin = "anonymous";
 
-    img.onerror = () => {
-      console.error("Failed to load background image");
-      setIsChanging(false);
-    };
+      img.onload = () => {
+        try {
+          const output = convertMediaToAscii(img, desiredCols, { rows: desiredRows, charRatio: 0.5 });
+
+          setTimeout(() => {
+            setAscii(output);
+            setDisplayedImage(targetUrl);
+            setFontSize(fontSizeFromWidth);
+            setLineHeight(exactLineHeight);
+
+            setTimeout(() => {
+              setIsChanging(false);
+            }, 100);
+          }, swapDelay);
+        } catch (error) {
+          console.error("ASCII conversion failed:", error);
+          setIsChanging(false);
+        }
+      };
+
+      img.onerror = () => {
+        console.error("Failed to load background image");
+        setIsChanging(false);
+      };
+    }
   };
 
   // Initial load
@@ -209,7 +260,10 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
       }, 200);
     };
     window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, [bgIndex]);
 
   const handleRefresh = () => {
@@ -313,10 +367,10 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
             backgroundRepeat: "no-repeat",
             WebkitBackgroundClip: "text",
             backgroundClip: "text",
-            
+
             opacity: isChanging ? 0 : (isDarkMode ? 0.7 : 1.0),
-            filter: isDarkMode 
-              ? "invert(1) hue-rotate(180deg) saturate(1) contrast(1) brightness(1)" 
+            filter: isDarkMode
+              ? "invert(1) hue-rotate(180deg) saturate(1) contrast(1) brightness(1)"
               : "invert(0) hue-rotate(0deg) saturate(1.5) contrast(1.3) brightness(0.85)",
             textShadow: isDarkMode ? "0 0 2px rgba(255, 255, 255, 0.2)" : "0 0 1px rgba(255, 255, 255, 0.5)",
             transition: "opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)",

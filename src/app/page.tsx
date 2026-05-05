@@ -54,19 +54,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [mounted]);
 
-  useEffect(() => {
-    // Tab Title Easter Egg
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        document.title = "hey, come back";
-      } else {
-        document.title = "Omkaar Shenoy | Data Engineer";
-      }
-    };
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, []);
 
   useEffect(() => {
     if (!loading && mounted) {
@@ -388,14 +376,14 @@ export default function Home() {
             <Envelope size={15} weight="fill" />
             <span style={{ fontSize: "11px", fontWeight: 500, letterSpacing: "0.05em", fontFamily: "var(--font-luxury)" }}>get in touch</span>
           </a>
-          <a href="https://github.com/omkaarshenoy" target="_blank" style={{ display: "flex", alignItems: "center", gap: "0.35rem", textDecoration: "none", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", transition: "color 0.2s" }}
+          <a href="https://github.com/omkaarshenoy" target="_blank" rel="me" style={{ display: "flex", alignItems: "center", gap: "0.35rem", textDecoration: "none", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", transition: "color 0.2s" }}
             onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "rgba(255,255,255,1)"}
             onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)"}
           >
             <GithubLogo size={15} weight="fill" />
             <span style={{ fontSize: "11px", fontWeight: 500, letterSpacing: "0.05em", fontFamily: "var(--font-luxury)" }}>github</span>
           </a>
-          <a href="https://linkedin.com/in/omkaarshenoy" target="_blank" style={{ display: "flex", alignItems: "center", gap: "0.35rem", textDecoration: "none", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", transition: "color 0.2s" }}
+          <a href="https://linkedin.com/in/omkaarshenoy" target="_blank" rel="me" style={{ display: "flex", alignItems: "center", gap: "0.35rem", textDecoration: "none", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", transition: "color 0.2s" }}
             onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "rgba(255,255,255,1)"}
             onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)"}
           >

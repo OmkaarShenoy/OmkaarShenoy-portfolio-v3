@@ -57,8 +57,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/images/og-image.webp",
-        width: 1200,
-        height: 630,
+        width: 1024,
+        height: 536,
         alt: "Omkaar Shenoy - Data Engineer Portfolio",
       },
     ],
@@ -92,9 +92,19 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": "https://omkaarshenoy.com/#person",
     "name": "Omkaar Shenoy",
+    "givenName": "Omkaar",
+    "familyName": "Shenoy",
     "jobTitle": "Data Engineer",
     "url": "https://omkaarshenoy.com",
+    "mainEntityOfPage": "https://omkaarshenoy.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Philadelphia",
+      "addressRegion": "PA",
+      "addressCountry": "US"
+    },
     "sameAs": [
       "https://linkedin.com/in/omkaarshenoy",
       "https://github.com/omkaarshenoy"
@@ -119,7 +129,7 @@ export default function RootLayout({
   try {
     const files = fs.readdirSync(backgroundsDir);
     backgroundImages = files
-      .filter(file => /\.webp$/i.test(file))
+      .filter(file => /\.(webp|mp4|webm|mov)$/i.test(file))
       .sort()
       .map(file => `/images/backgrounds/${file}`);
   } catch (error) {

@@ -5,6 +5,19 @@
 @layer base {
   :root {
     --font-luxury: "Editorial New", "PP Editorial Old", "Canela", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    --cursor-color: #000;
+    --background: #F4F0EA;
+  }
+
+  .dark {
+    --cursor-color: #fff;
+    --background: #0f0f10;
+  }
+
+  @media (pointer: fine) {
+    body, a, button, [role="button"], .scrap-item, .logo-scrap {
+      cursor: none !important;
+    }
   }
 
   *,
@@ -18,7 +31,7 @@
   }
 
   body {
-    background-color: #F4F0EA;
+    background-color: var(--background);
     color: #1a1a2e;
     font-family: var(--font-luxury);
     text-transform: lowercase;
@@ -31,11 +44,16 @@
   }
 
   .dark body {
-    background-color: #0f0f10;
+    background-color: var(--background);
     color: #ededed;
     --ascii-color: rgba(245, 239, 229, 0.64);
     --ascii-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
   }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* ─── Luxury Editorial Typography ─── */

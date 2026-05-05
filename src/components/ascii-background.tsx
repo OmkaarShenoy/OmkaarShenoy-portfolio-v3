@@ -61,7 +61,11 @@ const convertImageToAscii = (
   // ASCII character ramp (high to low contrast)
   const chars = "@%#*+=-:. ";
 
-  let ascii = "";
+  // Pre-allocate array for significantly faster generation in Safari
+  const pixelCount = data.length / 4;
+  const asciiArr = new Array(pixelCount + rows);
+  let outIdx = 0;
+  
   for (let i = 0; i < data.length; i += 4) {
     // Calculate luminance using standard formula
     const r = data[i];
@@ -71,13 +75,13 @@ const convertImageToAscii = (
 
     // Map luminance to character
     const charIndex = Math.floor((luminance / 255) * (chars.length - 1));
-    ascii += chars[charIndex];
+    asciiArr[outIdx++] = chars[charIndex];
 
     // Newline after each row
-    if ((i / 4 + 1) % cols === 0) ascii += "\n";
+    if ((i / 4 + 1) % cols === 0) asciiArr[outIdx++] = "\n";
   }
 
-  return ascii;
+  return asciiArr.join("");
 };
 
 export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
@@ -261,12 +265,7 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
         }}>
           <ArrowsClockwise size={18} weight="bold" />
         </div>
-        <style jsx global>{`
-          @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-        `}</style>
+
       </button>
 
       <div
@@ -302,10 +301,11 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
             position: "absolute",
             top: "50%",
             left: "50%",
-            transform: `translate(-50%, -50%) scale(${scale})`,
+            transform: `translate3d(-50%, -50%, 0) scale(${scale})`,
             maxWidth: "none",
             maxHeight: "none",
             overflow: "hidden",
+            textRendering: "optimizeSpeed",
 
             backgroundImage: `url('${displayedImage}')`,
             backgroundSize: "100% 100%",
@@ -319,7 +319,7 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
               ? "invert(1) hue-rotate(180deg) saturate(1) contrast(1) brightness(1)" 
               : "invert(0) hue-rotate(0deg) saturate(1.5) contrast(1.3) brightness(0.85)",
             textShadow: isDarkMode ? "0 0 2px rgba(255, 255, 255, 0.2)" : "0 0 1px rgba(255, 255, 255, 0.5)",
-            transition: "opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), filter 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
+            transition: "opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         >
           {ascii}

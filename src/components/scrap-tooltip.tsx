@@ -18,6 +18,8 @@ interface ScrapTooltipProps {
 }
 
 export function ScrapTooltip({ tooltip, tooltipDir, isVisible, href }: ScrapTooltipProps) {
+  if (!tooltip) return null;
+
   return (
     <div
       style={{

@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import AsciiBackground from "@/components/ascii-background";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Script from "next/script";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -134,9 +135,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
+        <Script
+          id="json-ld"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          strategy="afterInteractive"
         />
       </head>
       <body
@@ -144,8 +147,8 @@ export default function RootLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
-          enableSystem
+          defaultTheme="dark"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <div className="grain-overlay" />

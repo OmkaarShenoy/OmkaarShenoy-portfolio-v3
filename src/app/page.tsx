@@ -2,6 +2,7 @@
 
 import { LogoScrap } from "@/components/logo-scrap";
 import { PersonalScrap } from "@/components/personal-scrap";
+import { CustomCursor } from "@/components/custom-cursor";
 import {
   ArrowUpRight, GithubLogo, LinkedinLogo, Envelope, CaretDown, GameController, SuitcaseSimple
 } from "@phosphor-icons/react";
@@ -17,6 +18,9 @@ if (typeof window !== "undefined") {
 export default function Home() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [loaderFinished, setLoaderFinished] = useState(false);
   const isLightMode = !mounted ? true : resolvedTheme !== "dark";
   const lampRef = useRef<HTMLButtonElement>(null);
   const cablePathRef = useRef<SVGPathElement>(null);
@@ -27,35 +31,78 @@ export default function Home() {
     setMounted(true);
   }, []);
 
+  // ── INTEGRATED LOADING LOGIC ──
   useEffect(() => {
-    // Console Easter Egg
-    console.log(
-      `%c
-  ____  __  __ _  __    _      _    ____  
- / __ \\|  \\/  | |/ /   / \\    / \\  |  _ \\ 
-| |  | | |\\/| | ' /   / _ \\  / _ \\ | |_) |
-| |__| | |  | | . \\  / ___ \\/ ___ \\|  _ < 
- \\____/|_|  |_|_|\\_\\_/   \\_\\_/   \\_\\_| \\_\\
-                                   
-%c DATA ENGINEER %c
-Reach out if you are interested in the code for this website!
-      `,
-      "color: #111111; font-weight: bold; font-family: monospace;",
-      "background: #111111; color: #FFFFFF; padding: 2px 5px; font-weight: bold; font-family: monospace;",
-      "color: #888888; font-style: italic; font-family: monospace;",
-      "font-size: 8px; line-height: 0.8; letter-spacing: -0.5px; color: #FFFFFF; background: #000000; font-family: monospace;"
-    );
+    if (!mounted) return;
+    
+    let interval: NodeJS.Timeout;
+    const duration = 1200;
+    const step = 100 / (duration / 16);
+    
+    interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setLoading(false);
+          return 100;
+        }
+        return Math.min(prev + step + Math.random() * 3, 100);
+      });
+    }, 16);
 
-    gsap.fromTo(
-      ".hero-line",
-      { opacity: 0, y: 40, skewY: 1.5 },
-      { opacity: 1, y: 0, skewY: 0, duration: 0.85, ease: "power3.out", stagger: 0.12, delay: 0.2 }
-    );
-    gsap.fromTo(
-      ".hero-underline",
-      { scaleX: 0, transformOrigin: "left center" },
-      { scaleX: 1, duration: 0.7, ease: "power2.out", delay: 0.75 }
-    );
+    return () => clearInterval(interval);
+  }, [mounted]);
+
+  useEffect(() => {
+    // Tab Title Easter Egg
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        document.title = "hey, come back";
+      } else {
+        document.title = "Omkaar Shenoy | Data Engineer";
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  useEffect(() => {
+    if (!loading && mounted) {
+      // Fade out the opaque loader backdrop
+      gsap.to(".loader-backdrop", {
+        opacity: 0,
+        duration: 0.8,
+        ease: "power2.inOut",
+        onComplete: () => {
+          const el = document.querySelector(".loader-backdrop") as HTMLElement;
+          if (el) el.style.display = "none";
+        }
+      });
+
+      // Fade out loader percentage
+      gsap.to(".loader-aux", {
+        opacity: 0,
+        y: -10,
+        duration: 0.5,
+        ease: "power2.inOut",
+        onComplete: () => setLoaderFinished(true)
+      });
+
+      // Subtext lines and links rise up shortly after
+      gsap.fromTo(
+        ".hero-sub",
+        { opacity: 0, y: 30, skewY: 1 },
+        { opacity: 1, y: 0, skewY: 0, duration: 0.8, ease: "power3.out", stagger: 0.1, delay: 0.3 }
+      );
+
+      // Hero underline
+      gsap.fromTo(
+        ".hero-underline",
+        { scaleX: 0, transformOrigin: "left center" },
+        { scaleX: 1, duration: 0.8, ease: "power4.out", delay: 0.4 }
+      );
+    }
 
     // ── ELASTIC LAMP DRAGGING ──
     if (lampRef.current && cablePathRef.current) {
@@ -98,18 +145,33 @@ Reach out if you are interested in the code for this website!
         }
       });
     }
-  }, []);
+  }, [loading, mounted]);
 
   return (
     <>
+      <CustomCursor />
+      
+      <div className="grain-overlay" />
+
       <main style={{
-        position: "fixed", inset: 0, width: "100vw", height: "100vh", overflow: "hidden",
+        position: "fixed", inset: 0, width: "100vw", height: "100vh", 
+        overflowX: "hidden",
+        overflowY: (showLogos || showOutside) ? "auto" : "hidden",
         backgroundColor: "transparent",
         transition: "background-color 0.4s ease, filter 1.2s ease-in-out",
         filter: showOutside ? "sepia(0.15) saturate(1.2) contrast(0.95)" : "none",
         zIndex: 20,
         pointerEvents: "none"
       }}>
+        {/* Opaque Loader Backdrop - Sits inside main but behind the header */}
+        <div className="loader-backdrop" style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 5,
+          backgroundColor: isLightMode ? "#f8f8f8" : "#0a0a0a",
+          pointerEvents: "none"
+        }} />
+
         <h1 className="sr-only">Omkaar Shenoy - Data Engineer based in Philadelphia</h1>
 
         <svg style={{ position: "absolute", width: 0, height: 0, pointerEvents: "none" }} aria-hidden="true">
@@ -130,10 +192,50 @@ Reach out if you are interested in the code for this website!
 
         <header style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", paddingLeft: "clamp(3rem, 8vw, 9rem)", zIndex: 20, pointerEvents: "none", userSelect: "none", mixBlendMode: "normal" }}>
           <div>
-            <h1 className="hero-line luxury-text" style={{ opacity: 0, margin: 0, display: "block", fontSize: "clamp(3.8rem, 4vw, 8.5rem)", position: "relative", transition: "opacity 0.4s ease" }}>
-              Omkaar Shenoy.
-              <span className="hero-underline" style={{ position: "absolute", bottom: "0.06em", left: 0, width: "100%", height: "1px", background: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", display: "block", transformOrigin: "left center", transition: "background 0.4s ease" }} />
-            </h1>
+            <div style={{ position: "relative", width: "fit-content" }}>
+              <h1 className="luxury-text" style={{ 
+                margin: 0, 
+                display: "block", 
+                fontSize: "clamp(3.8rem, 4vw, 8.5rem)", 
+                position: "relative", 
+                opacity: 1, 
+                transition: "opacity 0.2s ease" 
+              }}>
+                Omkaar Shenoy.
+                
+                <span className="hero-underline" style={{ 
+                  position: "absolute", 
+                  bottom: "0.06em", 
+                  left: 0, 
+                  width: "100%", 
+                  height: "1px", 
+                  background: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", 
+                  display: "block", 
+                  transformOrigin: "left center", 
+                  transition: "background 0.4s ease",
+                  opacity: loading ? 0 : 1
+                }} />
+              </h1>
+
+              {/* Loader Percentage */}
+              {!loaderFinished && (
+                <div className="loader-aux" style={{
+                  position: "absolute",
+                  top: "-1.8rem",
+                  right: "0.2rem",
+                  fontSize: "14px",
+                  fontFamily: "var(--font-luxury)",
+                  fontStyle: "italic",
+                  fontWeight: 600,
+                  opacity: loading ? 0.9 : undefined,
+                  color: isLightMode ? "#111" : "#fff",
+                  letterSpacing: "0.05em",
+                  transition: "opacity 0.2s ease, color 0.4s ease"
+                }}>
+                  {Math.floor(progress)}%
+                </div>
+              )}
+            </div>
 
             <div style={{ position: "relative" }}>
               <div style={{
@@ -142,15 +244,15 @@ Reach out if you are interested in the code for this website!
                 transition: showOutside ? "none" : "opacity 0.8s ease, transform 0.8s ease",
                 pointerEvents: showOutside ? "none" : "auto",
               }}>
-                <div className="hero-line luxury-subtext" style={{ opacity: 0, marginTop: "2rem", fontSize: "clamp(0.85rem, 1.4vw, 1.1rem)", maxWidth: "48ch", transition: "opacity 0.4s ease" }}>
+                <div className="hero-sub luxury-subtext" style={{ opacity: 0, marginTop: "2rem", fontSize: "clamp(0.85rem, 1.4vw, 1.1rem)", maxWidth: "48ch", transition: "opacity 0.4s ease" }}>
                   I&apos;m a Data Engineer at Aramark, with previous experience at WebstaurantStore, NPR, and others.
                 </div>
 
-                <div className="hero-line luxury-subtext" style={{ opacity: 0, marginTop: "1rem", fontSize: "clamp(0.8rem, 1.2vw, 0.95rem)", maxWidth: "48ch", transition: "opacity 0.4s ease" }}>
+                <div className="hero-sub luxury-subtext" style={{ opacity: 0, marginTop: "1rem", fontSize: "clamp(0.8rem, 1.2vw, 0.95rem)", maxWidth: "48ch", transition: "opacity 0.4s ease" }}>
                   My daily work involves building core data infrastructure for millions of records moving at a global scale.
                 </div>
 
-                <div className="hero-line luxury-subtext" style={{ opacity: 0, marginTop: "1rem", fontSize: "clamp(0.75rem, 1.1vw, 0.85rem)", maxWidth: "48ch", transition: "opacity 0.4s ease" }}>
+                <div className="hero-sub luxury-subtext" style={{ opacity: 0, marginTop: "1rem", fontSize: "clamp(0.75rem, 1.1vw, 0.85rem)", maxWidth: "48ch", transition: "opacity 0.4s ease" }}>
                   Please reach out below for any interesting opportunities &mdash; I&apos;m always happy to talk.
                 </div>
               </div>
@@ -178,8 +280,8 @@ Reach out if you are interested in the code for this website!
               </div>
             </div>
 
-            <div className="hero-line" style={{ opacity: 0, marginTop: "2.2rem", display: "flex", gap: "1rem", pointerEvents: "auto", alignItems: "center" }}>
-              <a href="/Omkaar_Shenoy_Resume.pdf" target="_blank"
+            <div className="hero-sub" style={{ opacity: 0, marginTop: "2.2rem", display: "flex", gap: "1rem", pointerEvents: "auto", alignItems: "center" }}>
+              <a href="/Omkaar_Resume.pdf" target="_blank"
                 style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)", fontSize: "0.78rem", fontWeight: 500, fontFamily: "var(--font-luxury)", textDecoration: "none", letterSpacing: "0.01em", borderBottom: `1px solid ${isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)"}`, paddingBottom: "1px", transition: "color 0.2s, border-color 0.2s" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "#FFFFFF"; (e.currentTarget as HTMLElement).style.borderColor = isLightMode ? "#111111" : "#FFFFFF"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)"; (e.currentTarget as HTMLElement).style.borderColor = isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)"; }}
@@ -275,7 +377,7 @@ Reach out if you are interested in the code for this website!
 
         <LogoScrap src="/images/experiences/dbt-logo.png" alt="dbt"
           initialPos={{ x: "85%", y: "35%", rotate: 4 }} size={85} tooltipDir="left"
-          tooltip={{ category: "Skill", title: "dbt", sub: "Migrated raw SQL → dbt", period: "Aramark", tags: ["Models", "Tests", "Docs", "Maintainability"] }}
+          tooltip={{ category: "Skill", title: "Snowflake", sub: "Migrated raw SQL → dbt", period: "Aramark", tags: ["Models", "Tests", "Docs", "Maintainability"] }}
           isVisible={showLogos}
         />
 
@@ -457,22 +559,6 @@ Reach out if you are interested in the code for this website!
           size={170}
           isVisible={showOutside}
         />
-
-        {/* <PersonalScrap
-          type="cutout"
-          src="/images/outside-work/movies.png"
-          alt="movies"
-          tooltip={{
-            category: "Interest",
-            title: "Movie nerd",
-            sub: "sci-fi and incredibly slow pacing",
-            tags: ["Letterboxd", "A24", "Sci-Fi"]
-          }}
-          tooltipDir="left"
-          initialPos={{ x: "84%", y: "75%", rotate: 3 }}
-          size={160}
-          isVisible={showOutside}
-        /> */}
 
         <PersonalScrap
           type="cutout"

@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   description: "Omkaar Shenoy is a Data Engineer based in Philadelphia building data infrastructure at scale. Specialized in Snowflake, dbt, Azure, and Python.",
   keywords: ["Data Engineer", "Philadelphia", "Omkaar Shenoy", "Snowflake", "dbt", "Azure", "Python", "Data Infrastructure", "Software Engineer"],
   icons: {
-    icon: "/images/favicon.png",
+    icon: "/images/favicon.webp",
   },
   authors: [{ name: "Omkaar Shenoy", url: "https://omkaarshenoy.com" }],
   creator: "Omkaar Shenoy", 
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     siteName: "Omkaar Shenoy Portfolio",
     images: [
       {
-        url: "/images/og-image.png",
+        url: "/images/og-image.webp",
         width: 1200,
         height: 630,
         alt: "Omkaar Shenoy - Data Engineer Portfolio",
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Omkaar Shenoy | Data Engineer",
     description: "Data Engineer based in Philadelphia building data infrastructure at scale.",
-    images: ["/images/og-image.png"],
+    images: ["/images/og-image.webp"],
   },
   robots: {
     index: true,
@@ -108,7 +108,7 @@ export default function RootLayout({
       "name": "Aramark"
     },
     "description": "Omkaar Shenoy is a Data Engineer based in Philadelphia building data infrastructure at scale.",
-    "image": "https://omkaarshenoy.com/images/og-image.png",
+    "image": "https://omkaarshenoy.com/images/og-image.webp",
     "knowsAbout": ["Data Engineering", "Data Infrastructure", "Snowflake", "dbt", "Azure", "Python", "SQL", "Docker", "Kubernetes", "PostgreSQL", "MongoDB", "Java", "Software Engineering"]
   };
 
@@ -119,16 +119,15 @@ export default function RootLayout({
   try {
     const files = fs.readdirSync(backgroundsDir);
     backgroundImages = files
-      .filter(file => /\.(jpe?g|png|webp|svg)$/i.test(file))
+      .filter(file => /\.webp$/i.test(file))
       .sort()
       .map(file => `/images/backgrounds/${file}`);
   } catch (error) {
     console.error("Failed to read background images directory:", error);
     // Fallback to defaults if directory read fails
     backgroundImages = [
-      "/images/backgrounds/neist.jpeg",
-      "/images/backgrounds/oldmanofstorr.jpeg",
-      "/images/backgrounds/fuji.png",
+      "/images/backgrounds/01--Acatenengo, Guatemala--03-07-2024.webp",
+      "/images/backgrounds/02--Old Man of Storr, Scotland--03-07-2026.webp",
     ];
   }
 

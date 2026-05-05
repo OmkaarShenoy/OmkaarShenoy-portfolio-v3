@@ -3,6 +3,7 @@
 import { LogoScrap } from "@/components/logo-scrap";
 import { PersonalScrap } from "@/components/personal-scrap";
 import { CustomCursor } from "@/components/custom-cursor";
+import { LOGO_SCRAPS, PERSONAL_SCRAPS } from "@/lib/data";
 import {
   ArrowUpRight, GithubLogo, LinkedinLogo, Envelope, CaretDown, GameController, SuitcaseSimple
 } from "@phosphor-icons/react";
@@ -339,300 +340,23 @@ export default function Home() {
           </div>
         </header>
 
-        <LogoScrap src="/images/experiences/aramark-logo.png" alt="Aramark"
-          initialPos={{ x: "60%", y: "20%", rotate: -4 }} size={220} tooltipDir="right"
-          tooltip={{ category: "Job", title: "Aramark", sub: "Building Core Data Infra", period: "May 2025 – Present · Philadelphia", tags: ["Snowflake", "dbt", "Azure", "Snowpipe"], stat: "20M+", statLabel: "events/mo" }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/npr-logo.png" alt="NPR"
-          initialPos={{ x: "82%", y: "15%", rotate: 5 }} size={200} tooltipDir="left"
-          tooltip={{ category: "Job", title: "NPR", sub: "Scaling NPR.org", period: "Jun – Aug 2022 · Washington DC", tags: ["PHP", "HTML5", "Docker", "Kubernetes"], stat: "npr.org", statLabel: "shipped" }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/webstaurantstore-logo.png" alt="WebstaurantStore"
-          initialPos={{ x: "58%", y: "45%", rotate: -6 }} size={220} tooltipDir="right"
-          tooltip={{ category: "Job", title: "WebstaurantStore", sub: "Automating the test pipeline", period: "May 2024 – May 2025 · Remote", tags: ["Java", "Selenium", "Azure DevOps", "SQL Server"], stat: "-50%", statLabel: "QA cycles" }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/asu-logo.png" alt="Arizona State University"
-          initialPos={{ x: "75%", y: "58%", rotate: 7 }} size={200} tooltipDir="left"
-          tooltip={{ category: "Education", title: "Arizona State University", sub: "B.S. Computer Science", period: "Graduated May 2025 · Tempe, AZ", tags: ["CS", "Media Arts Minor", "DAAD Scholar"], stat: "4.00", statLabel: "GPA" }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/sunhacks-logo.png" alt="sunhacks"
-          initialPos={{ x: "56%", y: "75%", rotate: -5 }} size={200} tooltipDir="right"
-          tooltip={{ category: "Leadership", title: "sunhacks", sub: "Running ASU&apos;s biggest hackathon", period: "Tempe, AZ", tags: ["600 Attendees", "2× YoY Growth", "$40K Budget"], stat: "600", statLabel: "attendees" }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/snowflake-logo.png" alt="Snowflake"
-          initialPos={{ x: "46%", y: "38%", rotate: -8 }} size={85} tooltipDir="right"
-          tooltip={{ category: "Skill", title: "Snowflake", sub: "Managing 2K+ locations", period: "Aramark — current stack", tags: ["Streams", "Snowpipe", "Star Schema"] }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/dbt-logo.png" alt="dbt"
-          initialPos={{ x: "85%", y: "35%", rotate: 4 }} size={85} tooltipDir="left"
-          tooltip={{ category: "Skill", title: "Snowflake", sub: "Migrated raw SQL → dbt", period: "Aramark", tags: ["Models", "Tests", "Docs", "Maintainability"] }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/eagleeyes.png" alt="EagleEyes Search"
-          initialPos={{ x: "50%", y: "15%", rotate: 2 }} size={150} tooltipDir="left"
-          tooltip={{ category: "Job", title: "EagleEyes Search", sub: "Drone Control Interface", period: "Search & Rescue Startup", tags: ["Web App", "UI", "Drones"] }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/azure-logo.png" alt="Microsoft Azure"
-          initialPos={{ x: "70%", y: "14%", rotate: -5 }} size={85} tooltipDir="left"
-          tooltip={{ category: "Skill", title: "Microsoft Azure", sub: "Cloud & Ingestion pipelines", period: "Aramark + WebstaurantStore", tags: ["Event Grid", "Functions", "DevOps", "Queues"] }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/java-logo.png" alt="Java"
-          initialPos={{ x: "48%", y: "55%", rotate: 9 }} size={80} tooltipDir="right"
-          tooltip={{ category: "Skill", title: "Java", sub: "Test Automation at scale", period: "WebstaurantStore", tags: ["Selenium Grid", "JUnit", "Parallel Execution"], stat: "-50%", statLabel: "regression time" }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/python-logo.png" alt="Python"
-          initialPos={{ x: "78%", y: "42%", rotate: 6 }} size={80} tooltipDir="left"
-          tooltip={{ category: "Skill", title: "Python", sub: "Scripting & Pipelines", period: "Aramark + HackKit", tags: ["pandas", "SQLAlchemy", "automation"] }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/docker-logo.png" alt="Docker"
-          initialPos={{ x: "48%", y: "85%", rotate: -3 }} size={85} tooltipDir="right"
-          tooltip={{ category: "Skill", title: "Docker", sub: "Containerizing everything", period: "NPR · WebstaurantStore · HackKit", tags: ["Compose", "Kubernetes", "CI/CD pipelines"] }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/mongodb-logo.png" alt="MongoDB"
-          initialPos={{ x: "90%", y: "65%", rotate: 5 }} size={80} tooltipDir="left"
-          tooltip={{ category: "Skill", title: "MongoDB", sub: "Real-time scoring for 5K+ users", period: "Open Source — HackKit", tags: ["Schemas", "Aggregation", "HackKit"], stat: "5K+", statLabel: "participants" }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/kubernetes-logo.png" alt="Kubernetes"
-          initialPos={{ x: "75%", y: "85%", rotate: 6 }} size={80} tooltipDir="left"
-          tooltip={{ category: "Skill", title: "Kubernetes", sub: "Production Orchestration", period: "NPR — Docker/K8s pipelines", tags: ["Deployments", "Staged Rollout", "Production"] }}
-          isVisible={showLogos}
-        />
-
-        <LogoScrap src="/images/experiences/postgresql-logo.png" alt="PostgreSQL"
-          initialPos={{ x: "88%", y: "84%", rotate: -7 }} size={80} tooltipDir="left"
-          tooltip={{ category: "Skill", title: "PostgreSQL", sub: "Relational Modeling", period: "HackKit + general use", tags: ["SQL", "Data Modeling", "Analytics"] }}
-          isVisible={showLogos}
-        />
+        {LOGO_SCRAPS.map((scrap) => (
+          <LogoScrap
+            key={scrap.id}
+            {...scrap}
+            isVisible={showLogos}
+          />
+        ))}
 
 
 
-        <PersonalScrap
-          type="cutout"
-          src="/images/outside-work/justateit.png"
-          alt="justateit"
-          href="https://justateit.com/"
-          tooltip={{
-            category: "Project",
-            title: "justateit",
-            sub: "tracking specific dishes instead of whole restaurants",
-            period: "In Development",
-            tags: ["Taste Mapping", "iOS App"],
-            stat: "WIP",
-            statLabel: "launching soon"
-          }}
-          tooltipDir="left"
-          initialPos={{ x: "65%", y: "17%", rotate: -4 }}
-          size={200}
-          isVisible={showOutside}
-        />
-
-        <PersonalScrap
-          type="cutout"
-          src="/images/outside-work/kulfiboba.png"
-          alt="kulfiboba"
-          href="https://kulfiboba.vercel.app/"
-          tooltip={{
-            category: "Project",
-            title: "kulfiboba",
-            sub: "recipes without the life stories",
-            period: "Active Archive",
-            tags: ["Personal", "No-BS Food"],
-            stat: "100%",
-            statLabel: "signal, no noise"
-          }}
-          tooltipDir="right"
-          initialPos={{ x: "56%", y: "40%", rotate: 4 }}
-          size={180}
-          isVisible={showOutside}
-        />
-
-        <PersonalScrap
-          type="cutout"
-          src="/images/outside-work/boxdbuddy.png"
-          alt="boxdbuddy"
-          tooltip={{
-            category: "Project",
-            title: "boxdbuddy",
-            sub: "fixing letterboxd's missing features",
-            period: "Chrome Extension",
-            tags: ["UI Tweaks", "Filtering"]
-          }}
-          tooltipDir="left"
-          initialPos={{ x: "86%", y: "25%", rotate: 5 }}
-          size={100}
-          isVisible={showOutside}
-        />
-
-        <PersonalScrap
-          type="cutout"
-          src="/images/outside-work/wikigraph.png"
-          alt="wikigraph"
-          tooltip={{
-            category: "Project",
-            title: "wikigraph",
-            sub: "mapping wikipedia rabbit holes",
-            period: "Session Tracker",
-            tags: ["Data Viz", "Nodes"],
-            stat: "∞",
-            statLabel: "depth"
-          }}
-          tooltipDir="right"
-          initialPos={{ x: "64%", y: "60%", rotate: -6 }}
-          size={100}
-          isVisible={showOutside}
-        />
-
-        <PersonalScrap
-          type="cutout"
-          src="/images/outside-work/portfolio-stack.png"
-          alt="portfolio versions"
-          tooltip={{
-            category: "Project",
-            title: "this portfolio",
-            sub: "third iteration, i spend a lot of time trying new designs",
-            period: "2026 Build",
-            tags: ["Next.js", "GSAP", "ASCII"],
-            stat: "v3",
-            statLabel: "you can find the first two on github"
-          }}
-          tooltipDir="right"
-          initialPos={{ x: "52%", y: "22%", rotate: 2 }}
-          size={180}
-          isVisible={showOutside}
-        />
-
-        <PersonalScrap
-          type="polaroid"
-          src="/images/outside-work/cooking.png"
-          alt="cooking"
-          tooltip={{
-            category: "Hobby",
-            title: "Cooking",
-            sub: "feeding friends and winding down",
-            tags: ["Experimentation", "Dinner Parties"]
-          }}
-          tooltipDir="left"
-          initialPos={{ x: "68%", y: "42%", rotate: -4 }}
-          size={160}
-          isVisible={showOutside}
-        />
-
-        <PersonalScrap
-          type="cutout"
-          src="/images/outside-work/ektar.png"
-          alt="first few rolls"
-          tooltip={{
-            category: "Hobby",
-            title: "Analog Photography",
-            sub: "expensive hobby I just picked up",
-            tags: ["Kodak Ektar", "Point & Shoot"],
-            stat: "3",
-            statLabel: "rolls deep"
-          }}
-          tooltipDir="right"
-          initialPos={{ x: "53%", y: "62%", rotate: 4 }}
-          size={170}
-          isVisible={showOutside}
-        />
-
-        <PersonalScrap
-          type="cutout"
-          src="/images/outside-work/backpacking.png"
-          alt="budget backpacking"
-          tooltip={{
-            category: "Travel",
-            title: "Backpacking",
-            sub: "almost got stranded in iceland",
-            period: "Budget Travel",
-            tags: ["Hostels", "Guatemala"],
-            stat: "1",
-            statLabel: "near stranding"
-          }}
-          tooltipDir="left"
-          initialPos={{ x: "76%", y: "56%", rotate: -5 }}
-          size={170}
-          isVisible={showOutside}
-        />
-
-        <PersonalScrap
-          type="cutout"
-          src="/images/outside-work/gazella.png"
-          alt="gazella"
-          tooltip={{
-            category: "Volunteer",
-            title: "Phila Ship Guild",
-            sub: "working on a literal ship",
-            period: "Gazella",
-            tags: ["Sanding", "Masts", "Sailing"],
-            stat: "50",
-            statLabel: "hours sanded"
-          }}
-          tooltipDir="left"
-          initialPos={{ x: "78%", y: "20%", rotate: 6 }}
-          size={180}
-          isVisible={showOutside}
-        />
-
-        <PersonalScrap
-          type="cutout"
-          src="/images/outside-work/zoo.png"
-          alt="philadelphia zoo"
-          tooltip={{
-            category: "Volunteer",
-            title: "Philadelphia Zoo",
-            sub: "cleaning and guiding tours",
-            period: "Docent",
-            tags: ["Conservation", "Education"],
-            stat: "New",
-            statLabel: "role"
-          }}
-          tooltipDir="right"
-          initialPos={{ x: "58%", y: "82%", rotate: -2 }}
-          size={160}
-          isVisible={showOutside}
-        />
-
-        <PersonalScrap
-          type="cutout"
-          src="/images/outside-work/paws.png"
-          alt="paws shelter"
-          tooltip={{
-            category: "Volunteer",
-            title: "PAWS",
-            sub: "walking and cleaning",
-            period: "Shelter Volunteer",
-            tags: ["Dogs", "Cats"]
-          }}
-          tooltipDir="right"
-          initialPos={{ x: "71%", y: "80%", rotate: 4 }}
-          size={160}
-          isVisible={showOutside}
-        />
+        {PERSONAL_SCRAPS.map((scrap) => (
+          <PersonalScrap
+            key={scrap.id}
+            {...scrap}
+            isVisible={showOutside}
+          />
+        ))}
 
         <nav className="animate-on-load" style={{ position: "fixed", top: "2rem", right: "2rem", zIndex: 1000, display: "flex", flexDirection: "row", gap: "1.5rem", pointerEvents: "auto" }} aria-label="Theme toggle">
           <svg style={{ position: "absolute", top: "0", left: "0", width: "150px", height: "150px", overflow: "visible", pointerEvents: "none", zIndex: 0 }}>
@@ -652,7 +376,7 @@ export default function Home() {
             {!isLightMode && (
               <div style={{ position: "absolute", top: "50%", left: "-90%", width: "180px", height: "280px", background: "linear-gradient(190deg, rgba(255,250,210,0.25) 0%, transparent 75%)", clipPath: "polygon(50% -32px, 0% 100%, 100% 100%)", transformOrigin: "top center", transform: "rotate(30deg)", pointerEvents: "none", zIndex: -1, filter: "blur(12px)", transition: "opacity 0.4s ease" }} />
             )}
-            <img src="/images/lamp.png" alt="Light Mode" style={{ position: "relative", zIndex: 1, width: "75px", height: "75px", objectFit: "contain", filter: isLightMode ? `drop-shadow(2px 4px 6px rgba(0,0,0,0.3)) ${showOutside ? 'sepia(0.3) saturate(1.2)' : ''}` : `drop-shadow(0 0 10px rgba(255,250,210,${showOutside ? '0.6' : '0.3'}))`, transition: "filter 1.2s ease-in-out" }} />
+            <img src="/images/lamp.webp" alt="Light Mode" style={{ position: "relative", zIndex: 1, width: "75px", height: "75px", objectFit: "contain", filter: isLightMode ? `drop-shadow(2px 4px 6px rgba(0,0,0,0.3)) ${showOutside ? 'sepia(0.3) saturate(1.2)' : ''}` : `drop-shadow(0 0 10px rgba(255,250,210,${showOutside ? '0.6' : '0.3'}))`, transition: "filter 1.2s ease-in-out" }} />
           </button>
         </nav>
 

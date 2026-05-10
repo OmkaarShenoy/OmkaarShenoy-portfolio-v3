@@ -1,0 +1,91 @@
+import { Redis } from "@upstash/redis";
+import { Resend } from "resend";
+import { NextRequest, NextResponse } from "next/server";
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL!,
+  token: process.env.KV_REST_API_TOKEN!,
+});
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export async function GET(req: NextRequest) {
+  const authHeader = req.headers.get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}` && process.env.NODE_ENV === "production") {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  try {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 0);
+    const dateKey = `visits:${yesterday.toISOString().split("T")[0]}`;
+
+    const logs = await redis.lrange(dateKey, 0, -1);
+
+    if (!logs || logs.length === 0) {
+      return NextResponse.json({ message: "No visits recorded for yesterday." });
+    }
+
+    const visits = logs.map((log: any) => (typeof log === "string" ? JSON.parse(log) : log));
+
+    const tableRows = visits
+      .map(
+        (v: any) => `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${new Date(v.timestamp).toLocaleTimeString()}</td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">
+          <strong>${v.location}</strong><br/>
+          <span style="color: #666; font-size: 11px;">IP: ${v.ip}</span>
+        </td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">
+          ${v.device}<br/>
+          <span style="color: #666; font-size: 11px;">${v.screen} | ${v.timezone}</span>
+        </td>
+        <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">
+          ${v.url}<br/>
+          <span style="color: #666; font-size: 11px;">via ${v.referrer}</span>
+        </td>
+      </tr>
+    `
+      )
+      .join("");
+
+    const htmlContent = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 900px; margin: 0 auto; color: #333; line-height: 1.5;">
+        <h1 style="color: #000; font-size: 24px; margin-bottom: 5px;">Daily Visitor Summary</h1>
+        <p style="color: #666; margin-top: 0;">${yesterday.toDateString()} • <strong>${visits.length} total visits</strong></p>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; table-layout: fixed;">
+          <thead>
+            <tr style="background: #f9f9f9; text-align: left; color: #000; font-weight: bold;">
+              <th style="padding: 12px 10px; border-bottom: 2px solid #000; width: 15%;">Time</th>
+              <th style="padding: 12px 10px; border-bottom: 2px solid #000; width: 30%;">Location</th>
+              <th style="padding: 12px 10px; border-bottom: 2px solid #000; width: 30%;">Device & Session</th>
+              <th style="padding: 12px 10px; border-bottom: 2px solid #000; width: 25%;">Path & Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+        
+        <p style="margin-top: 40px; font-size: 11px; color: #999; border-top: 1px solid #eee; padding-top: 20px;">
+          Sent from your Portfolio Analytics Engine. All times are based on the visitor's local timezone.
+        </p>
+      </div>
+    `;
+
+    const { data, error } = await resend.emails.send({
+      from: "Portfolio Tracking <onboarding@resend.dev>",
+      to: ["omkaarshenoyos@gmail.com"],
+      subject: `📊 Daily Report: ${visits.length} visits on ${yesterday.toLocaleDateString()}`,
+      html: htmlContent,
+    });
+
+    if (error) return NextResponse.json({ error }, { status: 500 });
+
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}

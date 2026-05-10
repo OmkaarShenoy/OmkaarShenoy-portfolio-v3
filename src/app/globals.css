@@ -210,3 +210,8 @@
 .animate-on-load {
   animation: initialFadeIn 1s ease-out 0.6s backwards;
 }
+@media (max-width: 767px) {
+  body {
+    overflow: auto !important;
+  }
+}

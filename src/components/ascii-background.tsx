@@ -109,8 +109,17 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const hasMounted = useRef(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
     if (preRef.current && ascii) {
       const w = preRef.current.offsetWidth;
       const h = preRef.current.offsetHeight;
@@ -129,6 +138,7 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ascii, fontSize, lineHeight]);
 
   useEffect(() => {
@@ -145,6 +155,7 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
   }, []);
 
   const generate = (targetIndex: number, isRefresh = false) => {
+    if (isMobile) return;
     const container = document.getElementById("ascii-container");
     const viewportWidth = container ? container.clientWidth : Math.max(1, window.innerWidth);
     const viewportHeight = container ? container.clientHeight : Math.max(1, window.innerHeight);
@@ -245,14 +256,17 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
 
   // Initial load
   useEffect(() => {
+    if (isMobile) return;
     if (backgroundList.length > 0) {
       setBgIndex(0);
       setDisplayedImage(backgroundList[0]);
       generate(0, false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [backgroundList]);
 
   useEffect(() => {
+    if (isMobile) return;
     const onResize = () => {
       if (resizeTimer.current) window.clearTimeout(resizeTimer.current);
       resizeTimer.current = window.setTimeout(() => {
@@ -264,6 +278,7 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
       window.removeEventListener("resize", onResize);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bgIndex]);
 
   const handleRefresh = () => {
@@ -275,6 +290,8 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
     setBgIndex(nextIndex);
     generate(nextIndex, true);
   };
+
+  if (isMobile) return null;
 
   const info = parseBackgroundInfo(displayedImage);
 

@@ -34,7 +34,7 @@ export const LOGO_SCRAPS: LogoScrapData[] = [
     tooltip: {
       category: "Job",
       title: "Aramark",
-      sub: "Building Core Data Infra",
+      sub: "Core Data Infrastructure",
       period: "May 2025 – Present · Philadelphia",
       tags: ["Snowflake", "dbt", "Azure", "Snowpipe"],
       stat: "20M+",
@@ -51,7 +51,7 @@ export const LOGO_SCRAPS: LogoScrapData[] = [
     tooltip: {
       category: "Job",
       title: "NPR",
-      sub: "Scaling NPR.org",
+      sub: "Scalable Web Architecture",
       period: "Jun – Aug 2022 · Washington DC",
       tags: ["PHP", "HTML5", "Docker", "Kubernetes"],
       stat: "npr.org",
@@ -68,7 +68,7 @@ export const LOGO_SCRAPS: LogoScrapData[] = [
     tooltip: {
       category: "Job",
       title: "WebstaurantStore",
-      sub: "Automating the test pipeline",
+      sub: "Test Pipeline Automation",
       period: "May 2024 – May 2025 · Remote",
       tags: ["Java", "Selenium", "Azure DevOps", "SQL Server"],
       stat: "-50%",
@@ -102,11 +102,26 @@ export const LOGO_SCRAPS: LogoScrapData[] = [
     tooltip: {
       category: "Leadership",
       title: "sunhacks",
-      sub: "Running ASU's biggest hackathon",
+      sub: "ASU's Largest Hackathon",
       period: "Tempe, AZ",
       tags: ["600 Attendees", "2× YoY Growth", "$40K Budget"],
       stat: "600",
       statLabel: "attendees",
+    },
+  },
+  {
+    id: "eagleeyes",
+    src: "/images/experiences/eagleeyes.webp",
+    alt: "EagleEyes Search",
+    initialPos: { x: "50%", y: "15%", rotate: 2 },
+    size: 150,
+    tooltipDir: "left",
+    tooltip: {
+      category: "Job",
+      title: "EagleEyes Search",
+      sub: "Drone Search & Rescue",
+      period: "Search & Rescue Startup",
+      tags: ["Web App", "UI", "Drones"],
     },
   },
   {
@@ -119,7 +134,7 @@ export const LOGO_SCRAPS: LogoScrapData[] = [
     tooltip: {
       category: "Skill",
       title: "Snowflake",
-      sub: "Managing 2K+ locations",
+      sub: "Large-scale Data Management",
       period: "Aramark — current stack",
       tags: ["Streams", "Snowpipe", "Star Schema"],
     },
@@ -134,24 +149,9 @@ export const LOGO_SCRAPS: LogoScrapData[] = [
     tooltip: {
       category: "Skill",
       title: "Snowflake",
-      sub: "Migrated raw SQL → dbt",
+      sub: "SQL to dbt Migration",
       period: "Aramark",
       tags: ["Models", "Tests", "Docs", "Maintainability"],
-    },
-  },
-  {
-    id: "eagleeyes",
-    src: "/images/experiences/eagleeyes.webp",
-    alt: "EagleEyes Search",
-    initialPos: { x: "50%", y: "15%", rotate: 2 },
-    size: 150,
-    tooltipDir: "left",
-    tooltip: {
-      category: "Job",
-      title: "EagleEyes Search",
-      sub: "Drone Control Interface",
-      period: "Search & Rescue Startup",
-      tags: ["Web App", "UI", "Drones"],
     },
   },
   {
@@ -164,7 +164,7 @@ export const LOGO_SCRAPS: LogoScrapData[] = [
     tooltip: {
       category: "Skill",
       title: "Microsoft Azure",
-      sub: "Cloud & Ingestion pipelines",
+      sub: "Cloud Data Ingestion",
       period: "Aramark + WebstaurantStore",
       tags: ["Event Grid", "Functions", "DevOps", "Queues"],
     },
@@ -179,7 +179,7 @@ export const LOGO_SCRAPS: LogoScrapData[] = [
     tooltip: {
       category: "Skill",
       title: "Java",
-      sub: "Test Automation at scale",
+      sub: "Scalable Test Automation",
       period: "WebstaurantStore",
       tags: ["Selenium Grid", "JUnit", "Parallel Execution"],
       stat: "-50%",
@@ -211,7 +211,7 @@ export const LOGO_SCRAPS: LogoScrapData[] = [
     tooltip: {
       category: "Skill",
       title: "Docker",
-      sub: "Containerizing everything",
+      sub: "Container Infrastructure",
       period: "NPR · WebstaurantStore · HackKit",
       tags: ["Compose", "Kubernetes", "CI/CD pipelines"],
     },
@@ -226,7 +226,7 @@ export const LOGO_SCRAPS: LogoScrapData[] = [
     tooltip: {
       category: "Skill",
       title: "MongoDB",
-      sub: "Real-time scoring for 5K+ users",
+      sub: "Real-time Scoring Systems",
       period: "Open Source — HackKit",
       tags: ["Schemas", "Aggregation", "HackKit"],
       stat: "5K+",
@@ -243,7 +243,7 @@ export const LOGO_SCRAPS: LogoScrapData[] = [
     tooltip: {
       category: "Skill",
       title: "Kubernetes",
-      sub: "Production Orchestration",
+      sub: "System Orchestration",
       period: "NPR — Docker/K8s pipelines",
       tags: ["Deployments", "Staged Rollout", "Production"],
     },
@@ -258,7 +258,7 @@ export const LOGO_SCRAPS: LogoScrapData[] = [
     tooltip: {
       category: "Skill",
       title: "PostgreSQL",
-      sub: "Relational Modeling",
+      sub: "Relational Data Modeling",
       period: "HackKit + general use",
       tags: ["SQL", "Data Modeling", "Analytics"],
     },
@@ -275,7 +275,7 @@ export const PERSONAL_SCRAPS: PersonalScrapData[] = [
     tooltip: {
       category: "Project",
       title: "justateit",
-      sub: "tracking specific dishes instead of whole restaurants",
+      sub: "Dish-level tracking",
       period: "In Development",
       tags: ["Taste Mapping", "iOS App"],
       stat: "WIP",
@@ -294,11 +294,11 @@ export const PERSONAL_SCRAPS: PersonalScrapData[] = [
     tooltip: {
       category: "Project",
       title: "kulfiboba",
-      sub: "recipes without the life stories",
+      sub: "Direct recipes",
       period: "Active Archive",
       tags: ["Personal", "No-BS Food"],
-      stat: "100%",
-      statLabel: "signal, no noise",
+      stat: "Pure",
+      statLabel: "Content",
     },
     tooltipDir: "right",
     initialPos: { x: "56%", y: "40%", rotate: 4 },
@@ -312,7 +312,7 @@ export const PERSONAL_SCRAPS: PersonalScrapData[] = [
     tooltip: {
       category: "Project",
       title: "boxdbuddy",
-      sub: "fixing letterboxd's missing features",
+      sub: "Letterboxd enhancements",
       period: "Chrome Extension",
       tags: ["UI Tweaks", "Filtering"],
     },
@@ -328,7 +328,7 @@ export const PERSONAL_SCRAPS: PersonalScrapData[] = [
     tooltip: {
       category: "Project",
       title: "wikigraph",
-      sub: "mapping wikipedia rabbit holes",
+      sub: "Wikipedia Visualization",
       period: "Session Tracker",
       tags: ["Data Viz", "Nodes"],
       stat: "∞",
@@ -346,7 +346,7 @@ export const PERSONAL_SCRAPS: PersonalScrapData[] = [
     tooltip: {
       category: "Project",
       title: "this portfolio",
-      sub: "third iteration, i spend a lot of time trying new designs",
+      sub: "Design iteration v3",
       period: "2026 Build",
       tags: ["Next.js", "GSAP", "ASCII"],
       stat: "v3",
@@ -364,7 +364,7 @@ export const PERSONAL_SCRAPS: PersonalScrapData[] = [
     tooltip: {
       category: "Hobby",
       title: "Cooking",
-      sub: "feeding friends and winding down",
+      sub: "Dinner parties & hosting",
       tags: ["Experimentation", "Dinner Parties"],
     },
     tooltipDir: "left",
@@ -379,7 +379,7 @@ export const PERSONAL_SCRAPS: PersonalScrapData[] = [
     tooltip: {
       category: "Hobby",
       title: "Analog Photography",
-      sub: "expensive hobby I just picked up",
+      sub: "Analog Film",
       tags: ["Kodak Ektar", "Point & Shoot"],
       stat: "3",
       statLabel: "rolls deep",
@@ -396,7 +396,7 @@ export const PERSONAL_SCRAPS: PersonalScrapData[] = [
     tooltip: {
       category: "Travel",
       title: "Backpacking",
-      sub: "almost got stranded in iceland",
+      sub: "Budget Travel",
       period: "Budget Travel",
       tags: ["Hostels", "Guatemala"],
       stat: "1",
@@ -414,7 +414,7 @@ export const PERSONAL_SCRAPS: PersonalScrapData[] = [
     tooltip: {
       category: "Volunteer",
       title: "Phila Ship Guild",
-      sub: "working on a literal ship",
+      sub: "Tall Ship Restoration",
       period: "Gazella",
       tags: ["Sanding", "Masts", "Sailing"],
       stat: "50",
@@ -432,7 +432,7 @@ export const PERSONAL_SCRAPS: PersonalScrapData[] = [
     tooltip: {
       category: "Volunteer",
       title: "Philadelphia Zoo",
-      sub: "cleaning and guiding tours",
+      sub: "Docent & Conservation",
       period: "Docent",
       tags: ["Conservation", "Education"],
       stat: "New",
@@ -450,7 +450,7 @@ export const PERSONAL_SCRAPS: PersonalScrapData[] = [
     tooltip: {
       category: "Volunteer",
       title: "PAWS",
-      sub: "walking and cleaning",
+      sub: "Shelter Support",
       period: "Shelter Volunteer",
       tags: ["Dogs", "Cats"],
     },

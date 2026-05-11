@@ -57,7 +57,7 @@ export default function DigitalWave({ isLightMode }: DigitalWaveProps) {
   const placeholderColor = isLightMode ? "rgba(17,17,17,0.4)" : "rgba(255,255,255,0.4)";
   const dividerColor = isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)";
 
-  const easeOutExpo = [0.16, 1, 0.3, 1];
+  const easeOutExpo: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
   return (
     <div className="relative flex items-center h-full">

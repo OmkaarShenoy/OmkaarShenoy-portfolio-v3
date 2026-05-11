@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 0);
+    yesterday.setDate(yesterday.getDate() - 1);
     const dateKey = `visits:${yesterday.toISOString().split("T")[0]}`;
 
     const logs = await redis.lrange(dateKey, 0, -1);
@@ -27,6 +27,28 @@ export async function GET(req: NextRequest) {
     }
 
     const visits = logs.map((log: any) => (typeof log === "string" ? JSON.parse(log) : log));
+
+    // Calculate Popularity
+    const urlCounts: Record<string, number> = {};
+    visits.forEach((v: any) => {
+      const path = v.url || "/";
+      urlCounts[path] = (urlCounts[path] || 0) + 1;
+    });
+
+    const sortedUrls = Object.entries(urlCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5); // Top 5
+
+    const popularityHtml = sortedUrls
+      .map(
+        ([url, count]) => `
+      <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #ddd; font-size: 13px;">
+        <span style="font-family: monospace;">${url}</span>
+        <span style="font-weight: bold;">${count} visits</span>
+      </div>
+    `
+      )
+      .join("");
 
     const tableRows = visits
       .map(
@@ -55,6 +77,11 @@ export async function GET(req: NextRequest) {
         <h1 style="color: #000; font-size: 24px; margin-bottom: 5px;">Daily Visitor Summary</h1>
         <p style="color: #666; margin-top: 0;">${yesterday.toDateString()} • <strong>${visits.length} total visits</strong></p>
         
+        <div style="background: #fdfdfd; border: 1px solid #eee; border-radius: 8px; padding: 15px; margin: 20px 0;">
+          <h2 style="font-size: 16px; margin-top: 0; border-bottom: 1px solid #000; padding-bottom: 5px;">Top Visited Pages</h2>
+          ${popularityHtml}
+        </div>
+
         <table style="width: 100%; border-collapse: collapse; margin-top: 20px; table-layout: fixed;">
           <thead>
             <tr style="background: #f9f9f9; text-align: left; color: #000; font-weight: bold;">

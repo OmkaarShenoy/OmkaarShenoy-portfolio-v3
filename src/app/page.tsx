@@ -12,6 +12,7 @@ import { useEffect, useState, useRef } from "react";
 import { useTheme } from "next-themes";
 import { gsap } from "gsap";
 import { Draggable } from "gsap/dist/Draggable";
+import DigitalWave from "@/components/digital-wave";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(Draggable);
@@ -463,6 +464,9 @@ export default function Home() {
               <LinkedinLogo size={15} weight="fill" />
               <span style={{ fontSize: "11px", fontWeight: 500, letterSpacing: "0.05em", fontFamily: "var(--font-luxury)" }}>linkedin</span>
             </a>
+            <div style={{ marginLeft: "0.5rem" }}>
+              <DigitalWave isLightMode={isLightMode} />
+            </div>
           </nav>
         )}
       </main>

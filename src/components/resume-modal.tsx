@@ -160,6 +160,7 @@ export function ResumeModal({ isOpen, onClose, isLightMode }: ResumeModalProps) 
             
             <iframe
               src="/Omkaar_Shenoy_Resume.pdf#toolbar=0&navpanes=0&scrollbar=0"
+              loading="lazy"
               style={{
                 width: "100%",
                 height: "100%",

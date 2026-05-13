@@ -12,9 +12,14 @@ export function CustomCursor() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const cursor = cursorRef.current;
     const follower = followerRef.current;
+    if (!cursor || !follower) return;
+
+    document.body.classList.add("custom-cursor-enabled");
 
     const xTo = gsap.quickTo(cursor, "x", { duration: 0.2, ease: "power3" });
     const yTo = gsap.quickTo(cursor, "y", { duration: 0.2, ease: "power3" });
@@ -45,6 +50,7 @@ export function CustomCursor() {
     document.addEventListener("mouseleave", onMouseLeave);
 
     return () => {
+      document.body.classList.remove("custom-cursor-enabled");
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mousedown", onMouseDown);
       document.removeEventListener("mouseleave", onMouseLeave);

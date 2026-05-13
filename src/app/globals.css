@@ -14,7 +14,12 @@
   }
 
   @media (pointer: fine) {
-    body, a, button, [role="button"], .scrap-item, .logo-scrap {
+    body.custom-cursor-enabled,
+    body.custom-cursor-enabled a,
+    body.custom-cursor-enabled button,
+    body.custom-cursor-enabled [role="button"],
+    body.custom-cursor-enabled .scrap-item,
+    body.custom-cursor-enabled .logo-scrap {
       cursor: none !important;
     }
   }
@@ -33,7 +38,6 @@
     background-color: var(--background);
     color: #1a1a2e;
     font-family: var(--font-luxury);
-    text-transform: lowercase;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow: hidden;

@@ -15,10 +15,7 @@ import { Draggable } from "gsap/dist/Draggable";
 import DigitalWave from "@/components/digital-wave";
 import { ResumeModal } from "@/components/resume-modal";
 import posthog from "posthog-js";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(Draggable);
-}
+import Image from "next/image";
 
 export default function Home() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -32,19 +29,35 @@ export default function Home() {
   const [showLogos, setShowLogos] = useState(false);
   const [showOutside, setShowOutside] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduceMotion(motionQuery.matches);
+
+    const onMotionChange = () => setReduceMotion(motionQuery.matches);
     window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    motionQuery.addEventListener("change", onMotionChange);
+
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+      motionQuery.removeEventListener("change", onMotionChange);
+    };
   }, []);
 
   // ── INTEGRATED LOADING LOGIC ──
   useEffect(() => {
     if (!mounted) return;
+
+    if (reduceMotion) {
+      setProgress(100);
+      setLoading(false);
+      return;
+    }
     
     let interval: NodeJS.Timeout;
     const duration = 1200;
@@ -62,10 +75,16 @@ export default function Home() {
     }, 16);
 
     return () => clearInterval(interval);
-  }, [mounted]);
+  }, [mounted, reduceMotion]);
 
   useEffect(() => {
-    if (!loading && mounted) {
+    let draggableInstances: Draggable[] = [];
+
+    if (typeof window !== "undefined") {
+      gsap.registerPlugin(Draggable);
+    }
+
+    if (!loading && mounted && !reduceMotion) {
       // Fade out the opaque loader backdrop
       gsap.to(".loader-backdrop", {
         opacity: 0,
@@ -102,11 +121,11 @@ export default function Home() {
     }
 
     // ── ELASTIC LAMP DRAGGING ──
-    if (lampRef.current && cablePathRef.current) {
+    if (!isMobile && lampRef.current && cablePathRef.current && !reduceMotion) {
       const anchorX = 108;
       const anchorY = 32;
 
-      Draggable.create(lampRef.current, {
+      draggableInstances = Draggable.create(lampRef.current, {
         type: "x,y",
         onDrag: function () {
           const rawX = this.x;
@@ -143,7 +162,11 @@ export default function Home() {
         }
       });
     }
-  }, [loading, mounted]);
+
+    return () => {
+      draggableInstances.forEach((instance) => instance.kill());
+    };
+  }, [loading, mounted, isMobile, reduceMotion]);
 
   const toggleLogos = () => {
     const next = !showLogos;
@@ -318,6 +341,7 @@ export default function Home() {
                   posthog.capture("resume_clicked");
                   setIsResumeOpen(true);
                 }}
+                aria-label="Open resume preview"
                 style={{ background: "transparent", border: "none", borderTop: "none", borderLeft: "none", borderRight: "none", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "0.4rem", color: isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)", fontSize: "0.85rem", fontWeight: 500, fontFamily: "var(--font-luxury)", textDecoration: "none", letterSpacing: "0.01em", borderBottom: `1px solid ${isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)"}`, paddingBottom: "1px", paddingLeft: "0px", transition: "color 0.2s, border-color 0.2s" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "#FFFFFF"; (e.currentTarget as HTMLElement).style.borderColor = isLightMode ? "#111111" : "#FFFFFF"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)"; (e.currentTarget as HTMLElement).style.borderColor = isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)" } }
@@ -328,6 +352,8 @@ export default function Home() {
               <button
                 type="button"
                 onClick={toggleLogos}
+                aria-expanded={showLogos}
+                aria-label="Toggle experiences and skills section"
                 style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", color: (showLogos && isMobile) ? (isLightMode ? "#111" : "#fff") : (isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)"), fontSize: "0.85rem", fontWeight: showLogos && isMobile ? 600 : 500, fontFamily: "var(--font-luxury)", textDecoration: "none", letterSpacing: "0.01em", borderBottom: `1px solid ${(showLogos && isMobile) ? (isLightMode ? "#111" : "#fff") : (isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)")}`, paddingBottom: "1px", background: "transparent", borderTop: "none", borderLeft: "none", borderRight: "none", cursor: "pointer", transition: "all 0.2s" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "#FFFFFF"; (e.currentTarget as HTMLElement).style.borderColor = isLightMode ? "#111111" : "#FFFFFF"; }}
                 onMouseLeave={e => { if (!(showLogos && isMobile)) { (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,0.7)" : "rgba(255,255,255,0.7)"; (e.currentTarget as HTMLElement).style.borderColor = isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)"; } }}
@@ -349,6 +375,8 @@ export default function Home() {
               <button
                 type="button"
                 onClick={toggleOutside}
+                aria-expanded={showOutside}
+                aria-label="Toggle outside of work section"
                 style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", color: (showOutside && isMobile) ? (isLightMode ? "#111" : "#fff") : (isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)"), fontSize: "0.85rem", fontWeight: showOutside && isMobile ? 600 : 500, fontFamily: "var(--font-luxury)", textDecoration: "none", letterSpacing: "0.01em", borderBottom: `1px solid ${(showOutside && isMobile) ? (isLightMode ? "#111" : "#fff") : (isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)")}`, paddingBottom: "1px", background: "transparent", borderTop: "none", borderLeft: "none", borderRight: "none", cursor: "pointer", transition: "all 0.2s", paddingLeft: '0px' }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "#FFFFFF"; (e.currentTarget as HTMLElement).style.borderColor = isLightMode ? "#111111" : "#FFFFFF"; }}
                 onMouseLeave={e => { if (!(showOutside && isMobile)) { (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,0.7)" : "rgba(255,255,255,0.7)"; (e.currentTarget as HTMLElement).style.borderColor = isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)"; } }}
@@ -399,13 +427,13 @@ export default function Home() {
 
               
               <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-                <a href="mailto:omkaarshenoyos@gmail.com" onClick={() => posthog.capture("social_link_clicked", { platform: "email" })} style={{ textDecoration: "none", color: isLightMode ? "#111" : "#fff" }}>
+                <a href="mailto:omkaarshenoyos@gmail.com" aria-label="Email Omkaar" onClick={() => posthog.capture("social_link_clicked", { platform: "email" })} style={{ textDecoration: "none", color: isLightMode ? "#111" : "#fff" }}>
                   <Envelope size={20} weight="fill" />
                 </a>
-                <a href="https://github.com/omkaarshenoy" target="_blank" rel="me" onClick={() => posthog.capture("social_link_clicked", { platform: "github" })} style={{ textDecoration: "none", color: isLightMode ? "#111" : "#fff" }}>
+                <a href="https://github.com/omkaarshenoy" aria-label="Open GitHub profile" target="_blank" rel="me" onClick={() => posthog.capture("social_link_clicked", { platform: "github" })} style={{ textDecoration: "none", color: isLightMode ? "#111" : "#fff" }}>
                   <GithubLogo size={20} weight="fill" />
                 </a>
-                <a href="https://linkedin.com/in/omkaarshenoy" target="_blank" rel="me" onClick={() => posthog.capture("social_link_clicked", { platform: "linkedin" })} style={{ textDecoration: "none", color: isLightMode ? "#111" : "#fff" }}>
+                <a href="https://linkedin.com/in/omkaarshenoy" aria-label="Open LinkedIn profile" target="_blank" rel="me" onClick={() => posthog.capture("social_link_clicked", { platform: "linkedin" })} style={{ textDecoration: "none", color: isLightMode ? "#111" : "#fff" }}>
                   <LinkedinLogo size={20} weight="fill" />
                 </a>
               </div>
@@ -441,6 +469,7 @@ export default function Home() {
           <button
             ref={lampRef}
             title="Toggle Light Mode"
+            aria-label={`Switch to ${isLightMode ? "dark" : "light"} mode`}
             onClick={() => { const next = isLightMode ? "dark" : "light"; setTheme(next); posthog.capture("theme_toggled", { theme: next }); }}
             style={{ background: "transparent", border: "none", padding: 0, cursor: "pointer", display: "block", position: "relative", zIndex: 1 }}
             onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1) rotate(5deg)"}
@@ -449,27 +478,34 @@ export default function Home() {
             {!isLightMode && (
               <div style={{ position: "absolute", top: "50%", left: "-90%", width: "180px", height: "280px", background: "linear-gradient(190deg, rgba(255,250,210,0.25) 0%, transparent 75%)", clipPath: "polygon(50% -32px, 0% 100%, 100% 100%)", transformOrigin: "top center", transform: "rotate(30deg)", pointerEvents: "none", zIndex: -1, filter: "blur(12px)", transition: "opacity 0.4s ease" }} />
             )}
-            <img src="/images/lamp.webp" alt="Light Mode" style={{ position: "relative", zIndex: 1, width: isMobile ? "45px" : "75px", height: isMobile ? "45px" : "75px", objectFit: "contain", filter: isLightMode ? `drop-shadow(2px 4px 6px rgba(0,0,0,0.3)) ${showOutside ? 'sepia(0.3) saturate(1.2)' : ''}` : `drop-shadow(0 0 10px rgba(255,250,210,${showOutside ? '0.6' : '0.3'}))`, transition: "filter 1.2s ease-in-out" }} />
+            <Image
+              src="/images/lamp.webp"
+              alt="Light Mode"
+              width={isMobile ? 45 : 75}
+              height={isMobile ? 45 : 75}
+              priority
+              style={{ position: "relative", zIndex: 1, objectFit: "contain", filter: isLightMode ? `drop-shadow(2px 4px 6px rgba(0,0,0,0.3)) ${showOutside ? 'sepia(0.3) saturate(1.2)' : ''}` : `drop-shadow(0 0 10px rgba(255,250,210,${showOutside ? '0.6' : '0.3'}))`, transition: "filter 1.2s ease-in-out" }}
+            />
           </button>
         </nav>
 
         {!isMobile && (
           <nav className="animate-on-load" style={{ position: "fixed", bottom: "1.5rem", left: "1.5rem", zIndex: 1000, display: "flex", gap: "1rem", alignItems: "center", pointerEvents: "auto", flexWrap: "wrap" }} aria-label="Social links">
-            <a href="mailto:omkaarshenoyos@gmail.com" onClick={() => posthog.capture("social_link_clicked", { platform: "email" })} style={{ display: "flex", alignItems: "center", gap: "0.35rem", textDecoration: "none", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", transition: "color 0.2s" }}
+            <a href="mailto:omkaarshenoyos@gmail.com" aria-label="Email Omkaar" onClick={() => posthog.capture("social_link_clicked", { platform: "email" })} style={{ display: "flex", alignItems: "center", gap: "0.35rem", textDecoration: "none", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", transition: "color 0.2s" }}
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "rgba(255,255,255,1)"}
               onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)"}
             >
               <Envelope size={15} weight="fill" />
               <span style={{ fontSize: "11px", fontWeight: 500, letterSpacing: "0.05em", fontFamily: "var(--font-luxury)" }}>get in touch</span>
             </a>
-            <a href="https://github.com/omkaarshenoy" target="_blank" rel="me" onClick={() => posthog.capture("social_link_clicked", { platform: "github" })} style={{ display: "flex", alignItems: "center", gap: "0.35rem", textDecoration: "none", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", transition: "color 0.2s" }}
+            <a href="https://github.com/omkaarshenoy" aria-label="Open GitHub profile" target="_blank" rel="me" onClick={() => posthog.capture("social_link_clicked", { platform: "github" })} style={{ display: "flex", alignItems: "center", gap: "0.35rem", textDecoration: "none", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", transition: "color 0.2s" }}
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "rgba(255,255,255,1)"}
               onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)"}
             >
               <GithubLogo size={15} weight="fill" />
               <span style={{ fontSize: "11px", fontWeight: 500, letterSpacing: "0.05em", fontFamily: "var(--font-luxury)" }}>github</span>
             </a>
-            <a href="https://linkedin.com/in/omkaarshenoy" target="_blank" rel="me" onClick={() => posthog.capture("social_link_clicked", { platform: "linkedin" })} style={{ display: "flex", alignItems: "center", gap: "0.35rem", textDecoration: "none", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", transition: "color 0.2s" }}
+            <a href="https://linkedin.com/in/omkaarshenoy" aria-label="Open LinkedIn profile" target="_blank" rel="me" onClick={() => posthog.capture("social_link_clicked", { platform: "linkedin" })} style={{ display: "flex", alignItems: "center", gap: "0.35rem", textDecoration: "none", color: isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)", transition: "color 0.2s" }}
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "rgba(255,255,255,1)"}
               onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)"}
             >

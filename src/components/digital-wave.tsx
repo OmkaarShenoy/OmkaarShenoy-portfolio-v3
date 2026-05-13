@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HandWaving, PaperPlaneRight, Check, X } from "@phosphor-icons/react";
 import posthog from "posthog-js";
@@ -15,6 +15,9 @@ export default function DigitalWave({ isLightMode }: DigitalWaveProps) {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [waves, setWaves] = useState<{ id: number }[]>([]);
+  const emailInputId = useId();
+  const messageInputId = useId();
+  const feedbackId = useId();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,6 +92,7 @@ export default function DigitalWave({ isLightMode }: DigitalWaveProps) {
         <button
           onClick={triggerWave}
           disabled={isOpen || status === "sent"}
+          aria-label="Open wave contact form"
           className="flex items-center gap-[0.35rem]"
           style={{ 
             background: "none", 
@@ -166,8 +170,10 @@ export default function DigitalWave({ isLightMode }: DigitalWaveProps) {
               className="flex items-center overflow-hidden"
               style={{ marginLeft: "0.35rem" }}
             >
-              <form onSubmit={handleSubmit} className="flex items-center h-full">
+              <form onSubmit={handleSubmit} className="flex items-center h-full" aria-describedby={feedbackId}>
+                <label htmlFor={emailInputId} className="sr-only">Email address</label>
                 <input
+                  id={emailInputId}
                   required
                   autoFocus
                   type="email"
@@ -193,7 +199,9 @@ export default function DigitalWave({ isLightMode }: DigitalWaveProps) {
                 
                 <span style={{ color: dividerColor, margin: "0 0.5rem", fontSize: "11px" }}>/</span>
 
+                <label htmlFor={messageInputId} className="sr-only">Message (optional)</label>
                 <input
+                  id={messageInputId}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="msg"
@@ -218,6 +226,7 @@ export default function DigitalWave({ isLightMode }: DigitalWaveProps) {
                   <button
                     type="submit"
                     disabled={status === "sending" || !email}
+                    aria-label="Send wave"
                     style={{ 
                       background: "none", 
                       border: "none", 
@@ -243,6 +252,7 @@ export default function DigitalWave({ isLightMode }: DigitalWaveProps) {
                       setIsOpen(false);
                       posthog.capture("wave_form_closed");
                     }}
+                    aria-label="Close wave form"
                     style={{ 
                       background: "none", 
                       border: "none", 
@@ -269,6 +279,10 @@ export default function DigitalWave({ isLightMode }: DigitalWaveProps) {
           )}
         </AnimatePresence>
       </div>
+
+      <p id={feedbackId} role="status" aria-live="polite" className="sr-only">
+        {status === "error" ? "Wave form submission failed. Please try again." : ""}
+      </p>
       
       <style jsx>{`
         ::placeholder {

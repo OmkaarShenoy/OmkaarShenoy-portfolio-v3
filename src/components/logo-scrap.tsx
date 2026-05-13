@@ -23,8 +23,6 @@ interface LogoScrapProps {
 
 export function LogoScrap({ src, alt, tooltip, initialPos, size = 60, tooltipDir = "right", isVisible = true }: LogoScrapProps) {
   const wrapRef  = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
-  const driftRef = useRef<gsap.core.Tween | null>(null);
 
   const [isDragging, setIsDragging] = useState(false);
   const [hovered,    setHovered]    = useState(false);
@@ -41,7 +39,7 @@ export function LogoScrap({ src, alt, tooltip, initialPos, size = 60, tooltipDir
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener('resize', checkMobile, { passive: true });
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -149,7 +147,7 @@ export function LogoScrap({ src, alt, tooltip, initialPos, size = 60, tooltipDir
         }
       }}
     >
-      <div ref={innerRef} style={{ position: "relative" }}>
+      <div style={{ position: "relative" }}>
         <Image
           src={src}
           alt={alt}

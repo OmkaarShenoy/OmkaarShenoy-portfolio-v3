@@ -103,24 +103,25 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
   const [bgIndex, setBgIndex] = useState(0);
   const [displayedImage, setDisplayedImage] = useState(backgroundList[0]);
   const [isChanging, setIsChanging] = useState(false);
+  const [isVideoMode, setIsVideoMode] = useState(false);
   const colsRef = useRef<number>(120);
   const rowsRef = useRef<number>(60); // Store rows for video loop
   const resizeTimer = useRef<number | null>(null);
   const preRef = useRef<HTMLPreElement>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const rafRef = useRef<number | null>(null);
-  const hasMounted = useRef(false);
+  const lastFrameTsRef = useRef(0);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
-    window.addEventListener("resize", checkMobile);
+    window.addEventListener("resize", checkMobile, { passive: true });
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
-    if (isMobile) return;
+    if (isMobile || isVideoMode) return;
     if (preRef.current && ascii) {
       const w = preRef.current.offsetWidth;
       const h = preRef.current.offsetHeight;
@@ -140,7 +141,7 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ascii, fontSize, lineHeight]);
+  }, [ascii, fontSize, lineHeight, isMobile, isVideoMode, scale]);
 
   useEffect(() => {
     const updateThemeState = () => {
@@ -181,6 +182,7 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
 
     const targetUrl = backgroundList[targetIndex];
     const isVideo = /\.(mp4|webm|mov)$/i.test(targetUrl);
+    setIsVideoMode(isVideo);
 
     // Cancel existing loop
     if (rafRef.current) {
@@ -202,10 +204,16 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
       video.onloadeddata = () => {
         video.play().catch(console.error);
 
-        const renderLoop = () => {
+        const renderLoop = (ts: number) => {
           if (videoRef.current === video) {
-            const output = convertMediaToAscii(video, colsRef.current, { rows: rowsRef.current, charRatio: 0.5 });
-            setAscii(output);
+            // Cap conversion frequency to reduce CPU pressure on low-end devices and Safari.
+            if (ts - lastFrameTsRef.current >= 83) {
+              lastFrameTsRef.current = ts;
+              if (!document.hidden) {
+                const output = convertMediaToAscii(video, colsRef.current, { rows: rowsRef.current, charRatio: 0.5 });
+                setAscii(output);
+              }
+            }
             rafRef.current = requestAnimationFrame(renderLoop);
           }
         };
@@ -274,9 +282,12 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
         generate(bgIndex, false);
       }, 200);
     };
-    window.addEventListener("resize", onResize);
+    window.addEventListener("resize", onResize, { passive: true });
     return () => {
       window.removeEventListener("resize", onResize);
+      if (resizeTimer.current) {
+        window.clearTimeout(resizeTimer.current);
+      }
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

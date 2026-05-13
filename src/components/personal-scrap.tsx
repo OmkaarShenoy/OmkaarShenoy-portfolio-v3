@@ -41,7 +41,6 @@ export function PersonalScrap({
   href,
 }: PersonalScrapProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
   const hrefRef = useRef(href);
 
   const [hovered, setHovered] = useState(false);
@@ -54,7 +53,7 @@ export function PersonalScrap({
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener('resize', checkMobile, { passive: true });
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -176,7 +175,7 @@ export function PersonalScrap({
         }
       }}
     >
-      <div ref={innerRef} style={{ position: "relative" }}>
+      <div style={{ position: "relative" }}>
         {type === "polaroid" ? (
           <div className="polaroid-frame" style={{
             background: "#fdfdfd",

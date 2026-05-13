@@ -1,21 +1,44 @@
 "use client";
 
-import { LogoScrap } from "@/components/logo-scrap";
-import { PersonalScrap } from "@/components/personal-scrap";
-import { CustomCursor } from "@/components/custom-cursor";
-import { MobileProjectList } from "@/components/mobile-project-list";
+import dynamic from "next/dynamic";
 import { LOGO_SCRAPS, PERSONAL_SCRAPS } from "@/lib/data";
 import {
   ArrowUpRight, GithubLogo, LinkedinLogo, Envelope, CaretDown, GameController, SuitcaseSimple
 } from "@phosphor-icons/react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, startTransition } from "react";
 import { useTheme } from "next-themes";
 import { gsap } from "gsap";
 import { Draggable } from "gsap/dist/Draggable";
-import DigitalWave from "@/components/digital-wave";
-import { ResumeModal } from "@/components/resume-modal";
 import posthog from "posthog-js";
-import Image from "next/image";
+
+const CustomCursor = dynamic(
+  () => import("@/components/custom-cursor").then((m) => m.CustomCursor),
+  { ssr: false }
+);
+
+const LogoScrap = dynamic(
+  () => import("@/components/logo-scrap").then((m) => m.LogoScrap),
+  { ssr: false }
+);
+
+const PersonalScrap = dynamic(
+  () => import("@/components/personal-scrap").then((m) => m.PersonalScrap),
+  { ssr: false }
+);
+
+const MobileProjectList = dynamic(
+  () => import("@/components/mobile-project-list").then((m) => m.MobileProjectList),
+  { ssr: false }
+);
+
+const DigitalWave = dynamic(() => import("@/components/digital-wave"), {
+  ssr: false,
+});
+
+const ResumeModal = dynamic(
+  () => import("@/components/resume-modal").then((m) => m.ResumeModal),
+  { ssr: false }
+);
 
 export default function Home() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -470,7 +493,11 @@ export default function Home() {
             ref={lampRef}
             title="Toggle Light Mode"
             aria-label={`Switch to ${isLightMode ? "dark" : "light"} mode`}
-            onClick={() => { const next = isLightMode ? "dark" : "light"; setTheme(next); posthog.capture("theme_toggled", { theme: next }); }}
+            onClick={() => {
+              const next = isLightMode ? "dark" : "light";
+              startTransition(() => setTheme(next));
+              window.setTimeout(() => posthog.capture("theme_toggled", { theme: next }), 0);
+            }}
             style={{ background: "transparent", border: "none", padding: 0, cursor: "pointer", display: "block", position: "relative", zIndex: 1 }}
             onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1) rotate(5deg)"}
             onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
@@ -478,12 +505,13 @@ export default function Home() {
             {!isLightMode && (
               <div style={{ position: "absolute", top: "50%", left: "-90%", width: "180px", height: "280px", background: "linear-gradient(190deg, rgba(255,250,210,0.25) 0%, transparent 75%)", clipPath: "polygon(50% -32px, 0% 100%, 100% 100%)", transformOrigin: "top center", transform: "rotate(30deg)", pointerEvents: "none", zIndex: -1, filter: "blur(12px)", transition: "opacity 0.4s ease" }} />
             )}
-            <Image
+            <img
               src="/images/lamp.webp"
               alt="Light Mode"
               width={isMobile ? 45 : 75}
               height={isMobile ? 45 : 75}
-              priority
+              loading="eager"
+              decoding="async"
               style={{ position: "relative", zIndex: 1, objectFit: "contain", filter: isLightMode ? `drop-shadow(2px 4px 6px rgba(0,0,0,0.3)) ${showOutside ? 'sepia(0.3) saturate(1.2)' : ''}` : `drop-shadow(0 0 10px rgba(255,250,210,${showOutside ? '0.6' : '0.3'}))`, transition: "filter 1.2s ease-in-out" }}
             />
           </button>

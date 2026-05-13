@@ -7,7 +7,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "perf:bundle": "node scripts/check-bundle-size.mjs",
+    "perf:lighthouse:ci": "lhci autorun --config=lighthouserc.json",
+    "perf:ci": "npm run perf:bundle && npm run perf:lighthouse:ci"
   },
   "dependencies": {
     "@fontsource/homemade-apple": "^5.2.8",
@@ -37,6 +40,7 @@
     "tailwind-merge": "^2.6.1"
   },
   "devDependencies": {
+    "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.59.1",
     "@types/node": "latest",
     "@types/react": "latest",

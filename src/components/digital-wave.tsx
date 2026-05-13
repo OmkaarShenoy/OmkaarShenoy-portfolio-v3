@@ -239,7 +239,10 @@ export default function DigitalWave({ isLightMode }: DigitalWaveProps) {
 
                   <button
                     type="button"
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => {
+                      setIsOpen(false);
+                      posthog.capture("wave_form_closed");
+                    }}
                     style={{ 
                       background: "none", 
                       border: "none", 

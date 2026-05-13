@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowsClockwise, MapPin } from "@phosphor-icons/react";
+import posthog from "posthog-js";
 
 interface AsciiBackgroundProps {
   images?: string[];
@@ -284,6 +285,7 @@ export default function AsciiBackground({ images = [] }: AsciiBackgroundProps) {
   const handleRefresh = () => {
     if (isChanging || backgroundList.length <= 1) return;
     setIsChanging(true);
+    posthog.capture("ascii_background_refreshed");
 
     const nextIndex = (bgIndex + 1) % backgroundList.length;
 

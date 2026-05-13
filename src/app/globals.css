@@ -222,3 +222,13 @@
     overflow: auto !important;
   }
 }
+
+/* Target specific outside-work images to ensure both dimensions are preserved */
+img[src*="/images/outside-work/justateit.webp"],
+img[src*="/images/outside-work/backpacking.webp"],
+img[src*="/images/outside-work/gazella.webp"],
+img[src*="/images/outside-work/paws.webp"] {
+  width: auto !important;
+  height: auto !important;
+  max-width: 100%;
+}

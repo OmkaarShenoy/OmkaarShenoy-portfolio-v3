@@ -8,7 +8,8 @@ import AsciiBackground from "@/components/ascii-background";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Script from "next/script";
-import VisitLogger from "@/components/visit-logger";
+import PostHogRouteShell from "@/components/posthog-route-shell";
+
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -164,7 +165,9 @@ export default function RootLayout({
           <div className="grain-overlay" />
           <AsciiBackground images={backgroundImages} />
           <div style={{ position: "relative", zIndex: 10 }}>
-            {children}
+            <PostHogRouteShell>
+              {children}
+            </PostHogRouteShell>
           </div>
 
           <svg className="hidden">
@@ -176,7 +179,6 @@ export default function RootLayout({
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
-        <VisitLogger />
       </body>
     </html>
   );

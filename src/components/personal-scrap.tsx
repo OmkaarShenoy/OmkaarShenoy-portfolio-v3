@@ -5,6 +5,7 @@ import Image from "next/image";
 import { gsap } from "gsap";
 import { Draggable } from "gsap/dist/Draggable";
 import { ScrapTooltip, TooltipData } from "./scrap-tooltip";
+import posthog from "posthog-js";
 
 gsap.registerPlugin(Draggable);
 
@@ -88,11 +89,13 @@ export function PersonalScrap({
           type: "x,y",
           zIndexBoost: false,
           onClick() {
+            posthog.capture("personal_scrap_clicked", { href: hrefRef.current, alt });
             if (hrefRef.current) {
               window.open(hrefRef.current, "_blank", "noopener,noreferrer");
             }
           },
           onDragStart() {
+            posthog.capture("personal_scrap_dragged", { alt });
             setIsDragging(true);
             setZIndex(999);
             gsap.to(el, { scale: 1.04, duration: 0.15 });
@@ -166,7 +169,12 @@ export function PersonalScrap({
       }}
       onMouseEnter={() => !isDragging && !isMobile && setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={() => isMobile && setHovered(!hovered)}
+      onClick={() => {
+        if (isMobile) {
+          setHovered(!hovered);
+          posthog.capture("personal_scrap_clicked", { href: hrefRef.current, alt, hovered: !hovered });
+        }
+      }}
     >
       <div ref={innerRef} style={{ position: "relative" }}>
         {type === "polaroid" ? (
@@ -178,12 +186,32 @@ export function PersonalScrap({
             transform: `rotate(${initRotate ?? 0}deg)`,
           }}>
             <div style={{ width: "100%", height: size * 0.9, position: "relative", overflow: "hidden", background: "#eee" }}>
-              {src && <Image src={src} alt={alt} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover select-none" draggable={false} />}
+              {src && (
+                <Image
+                  src={src}
+                  alt={alt}
+                  width={size}
+                  height={Math.max(1, Math.floor(size * 0.9))}
+                  className="object-cover select-none"
+                  draggable={false}
+                  style={{ objectFit: "cover", width: "100%", height: "auto" }}
+                />
+              )}
             </div>
           </div>
         ) : (
-          <div style={{ width: size, height: "auto", position: "relative" }}>
-            {src && <Image src={src} alt={alt} width={size} height={size} className="select-none scrap-image" draggable={false} style={{ filter: "drop-shadow(2px 4px 10px rgba(0,0,0,0.3))", objectFit: "contain" }} />}
+          <div style={{ width: size, height: size, position: "relative" }}>
+            {src && (
+              <Image
+                src={src}
+                alt={alt}
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className="select-none scrap-image"
+                draggable={false}
+                style={{ filter: "drop-shadow(2px 4px 10px rgba(0,0,0,0.3))", objectFit: "contain" }}
+              />
+            )}
           </div>
         )}
 

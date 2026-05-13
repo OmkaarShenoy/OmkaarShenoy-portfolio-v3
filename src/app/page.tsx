@@ -13,6 +13,7 @@ import { useTheme } from "next-themes";
 import { gsap } from "gsap";
 import { Draggable } from "gsap/dist/Draggable";
 import DigitalWave from "@/components/digital-wave";
+import { ResumeModal } from "@/components/resume-modal";
 import posthog from "posthog-js";
 
 if (typeof window !== "undefined") {
@@ -31,6 +32,7 @@ export default function Home() {
   const [showLogos, setShowLogos] = useState(false);
   const [showOutside, setShowOutside] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isResumeOpen, setIsResumeOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -311,14 +313,17 @@ export default function Home() {
             </div>
 
             <div className="hero-sub" style={{ opacity: 0, marginTop: "2.2rem", display: "flex", flexWrap: "wrap", gap: "1.2rem", pointerEvents: "auto", alignItems: "center" }}>
-              <a href="/Omkaar_Resume.pdf" target="_blank"
-                onClick={() => posthog.capture("resume_clicked")}
-                style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)", fontSize: "0.85rem", fontWeight: 500, fontFamily: "var(--font-luxury)", textDecoration: "none", letterSpacing: "0.01em", borderBottom: `1px solid ${isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)"}`, paddingBottom: "1px", transition: "color 0.2s, border-color 0.2s" }}
+              <button
+                onClick={() => {
+                  posthog.capture("resume_clicked");
+                  setIsResumeOpen(true);
+                }}
+                style={{ background: "transparent", border: "none", borderTop: "none", borderLeft: "none", borderRight: "none", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "0.4rem", color: isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)", fontSize: "0.85rem", fontWeight: 500, fontFamily: "var(--font-luxury)", textDecoration: "none", letterSpacing: "0.01em", borderBottom: `1px solid ${isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)"}`, paddingBottom: "1px", paddingLeft: "0px", transition: "color 0.2s, border-color 0.2s" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = isLightMode ? "#111111" : "#FFFFFF"; (e.currentTarget as HTMLElement).style.borderColor = isLightMode ? "#111111" : "#FFFFFF"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = isLightMode ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.9)"; (e.currentTarget as HTMLElement).style.borderColor = isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.2)" } }
               >
                 <ArrowUpRight size={14} /> resume
-              </a>
+              </button>
               <span style={{ color: isLightMode ? "rgba(17,17,17,0.2)" : "rgba(255,255,255,0.7)", fontSize: "0.7rem", transition: "color 0.4s ease" }}>/</span>
               <button
                 type="button"
@@ -477,6 +482,12 @@ export default function Home() {
           </nav>
         )}
       </main>
+
+      <ResumeModal 
+        isOpen={isResumeOpen} 
+        onClose={() => { setIsResumeOpen(false); posthog.capture("resume_modal_closed"); }} 
+        isLightMode={isLightMode} 
+      />
 
       <style jsx global>{`
         @keyframes fadeInUp {

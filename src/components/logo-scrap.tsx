@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { Draggable } from "gsap/dist/Draggable";
+import posthog from "posthog-js";
 
 gsap.registerPlugin(Draggable);
 
@@ -65,6 +66,7 @@ export function LogoScrap({ src, alt, tooltip, initialPos, size = 60, tooltipDir
         type: "x,y",
         zIndexBoost: false,
         onDragStart() {
+          posthog.capture("logo_scrap_dragged", { alt });
           setIsDragging(true);
           setHovered(false);
           setZIndex(999);
@@ -140,7 +142,12 @@ export function LogoScrap({ src, alt, tooltip, initialPos, size = 60, tooltipDir
       }}
       onMouseEnter={() => !isDragging && !isMobile && setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={() => isMobile && setHovered(!hovered)}
+      onClick={() => {
+        if (isMobile) {
+          setHovered(!hovered);
+          posthog.capture("logo_scrap_clicked", { alt, hovered: !hovered });
+        }
+      }}
     >
       <div ref={innerRef} style={{ position: "relative" }}>
         <Image
@@ -153,6 +160,8 @@ export function LogoScrap({ src, alt, tooltip, initialPos, size = 60, tooltipDir
           style={{
             filter: "drop-shadow(2px 4px 6px rgba(0,0,0,0.2))",
             objectFit: "contain",
+            width: `${size}px`,
+            height: `${size}px`,
           }}
         />
         <ScrapTooltip tooltip={tooltip} isVisible={showPanel} tooltipDir={tooltipDir} />

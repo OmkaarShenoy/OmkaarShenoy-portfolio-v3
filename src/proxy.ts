@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  
+
   if (path.startsWith('/admin') && !path.startsWith('/admin/login') && !path.startsWith('/api/admin/login')) {
     const session = request.cookies.get('admin_session')?.value;
-    
+
     if (!session || session !== process.env.ADMIN_PASSWORD) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
-  
+
   return NextResponse.next();
 }
 

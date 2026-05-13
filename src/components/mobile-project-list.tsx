@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { TooltipData } from "./scrap-tooltip";
+import posthog from "posthog-js";
 
 interface MobileProjectItemProps {
   id: string;
@@ -15,6 +16,7 @@ interface MobileProjectItemProps {
 
 function MobileProjectItem({ id, src, alt, tooltip, href, isLightMode }: MobileProjectItemProps) {
   const handleClick = () => {
+    posthog.capture("mobile_project_clicked", { title: tooltip.title, href });
     if (href) {
       window.open(href, "_blank", "noopener,noreferrer");
     }
@@ -54,7 +56,7 @@ function MobileProjectItem({ id, src, alt, tooltip, href, isLightMode }: MobileP
             alt={alt} 
             width={40} 
             height={40} 
-            style={{ objectFit: "contain" }}
+            style={{ objectFit: "contain", width: "auto", height: "auto" }}
           />
         </div>
 

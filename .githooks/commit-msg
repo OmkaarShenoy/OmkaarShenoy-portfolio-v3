@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+python3 - "$1" <<'PY'
+import pathlib, sys
+path = pathlib.Path(sys.argv[1])
+lines = path.read_text().splitlines()
+filtered = [line for line in lines if line.strip() != 'Co-authored-by: Copilot <copilot@github.com>']
+path.write_text('\n'.join(filtered) + ('\n' if filtered else ''))
+PY

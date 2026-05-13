@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HandWaving, PaperPlaneRight, Check, X } from "@phosphor-icons/react";
+import posthog from "posthog-js";
 
 interface DigitalWaveProps {
   isLightMode: boolean;
@@ -19,6 +20,7 @@ export default function DigitalWave({ isLightMode }: DigitalWaveProps) {
     e.preventDefault();
     if (!email) return;
 
+    posthog.capture("wave_submitted", { has_message: !!message });
     setStatus("sending");
     try {
       const res = await fetch("/api/system/wave", {
@@ -37,9 +39,11 @@ export default function DigitalWave({ isLightMode }: DigitalWaveProps) {
         }, 2500);
       } else {
         setStatus("error");
+        posthog.captureException(new Error(`Wave submission failed: ${res.status}`));
       }
     } catch (err) {
       setStatus("error");
+      posthog.captureException(err);
     }
   };
 
@@ -51,6 +55,7 @@ export default function DigitalWave({ isLightMode }: DigitalWaveProps) {
       setWaves((prev) => prev.filter((w) => w.id !== id));
     }, 1000);
     setIsOpen(true);
+    posthog.capture("wave_form_opened");
   };
 
   const textColor = isLightMode ? "rgba(17,17,17,1)" : "rgba(255,255,255,1)";

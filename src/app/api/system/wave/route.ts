@@ -1,6 +1,7 @@
 import { Redis } from "@upstash/redis";
 import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL!,
@@ -44,11 +45,26 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error("Resend error:", error);
+      const posthog = getPostHogClient();
+      posthog.capture({
+        distinctId: email,
+        event: "wave_error",
+        properties: { error_source: "resend" },
+      });
+      await posthog.shutdown();
       return NextResponse.json({ error }, { status: 500 });
     }
 
     // Store in Redis with 24h TTL to prevent spam
     await redis.set(redisKey, message || "NO_MESSAGE", { ex: 60 * 60 * 24 });
+
+    const posthog = getPostHogClient();
+    posthog.capture({
+      distinctId: email,
+      event: "wave_sent",
+      properties: { has_message: !!(message && message !== "NO_MESSAGE") },
+    });
+    await posthog.shutdown();
 
     return NextResponse.json({ success: true });
   } catch (error) {

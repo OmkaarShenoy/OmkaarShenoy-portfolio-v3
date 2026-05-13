@@ -28,6 +28,10 @@ export async function GET(req: NextRequest) {
 
     const visits = logs.map((log: any) => (typeof log === "string" ? JSON.parse(log) : log));
 
+    const totalVisits = visits.length;
+    const botVisits = visits.filter((v: any) => v.isBot).length;
+    const humanVisits = totalVisits - botVisits;
+
     // Calculate Popularity
     const urlCounts: Record<string, number> = {};
     visits.forEach((v: any) => {
@@ -57,15 +61,17 @@ export async function GET(req: NextRequest) {
         <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${new Date(v.timestamp).toLocaleTimeString()}</td>
         <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">
           <strong>${v.location}</strong><br/>
+          ${v.company && v.company !== "Unknown" ? `<span style="color: #0056b3; font-weight: bold; font-size: 11px;">🏢 ${v.company}</span><br/>` : ""}
           <span style="color: #666; font-size: 11px;">IP: ${v.ip}</span>
         </td>
         <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">
-          ${v.device}<br/>
+          ${v.isBot ? "🤖 Bot" : (v.visitCount > 1 ? `🔄 Return (#${v.visitCount})` : "🆕 New")} - ${v.device}<br/>
           <span style="color: #666; font-size: 11px;">${v.screen} | ${v.timezone}</span>
         </td>
         <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">
           ${v.url}<br/>
           <span style="color: #666; font-size: 11px;">via ${v.referrer}</span>
+          ${v.campaign && (v.campaign.source || v.campaign.ref || v.campaign.medium) ? `<br/><span style="color: #d946ef; font-size: 11px; font-weight: bold;">🔗 ${v.campaign.source || v.campaign.ref || v.campaign.medium}</span>` : ""}
         </td>
       </tr>
     `
@@ -75,7 +81,7 @@ export async function GET(req: NextRequest) {
     const htmlContent = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 900px; margin: 0 auto; color: #333; line-height: 1.5;">
         <h1 style="color: #000; font-size: 24px; margin-bottom: 5px;">Daily Visitor Summary</h1>
-        <p style="color: #666; margin-top: 0;">${yesterday.toDateString()} • <strong>${visits.length} total visits</strong></p>
+        <p style="color: #666; margin-top: 0;">${yesterday.toDateString()} • <strong>${totalVisits} total visits</strong> (${humanVisits} human, ${botVisits} bots)</p>
         
         <div style="background: #fdfdfd; border: 1px solid #eee; border-radius: 8px; padding: 15px; margin: 20px 0;">
           <h2 style="font-size: 16px; margin-top: 0; border-bottom: 1px solid #000; padding-bottom: 5px;">Top Visited Pages</h2>
@@ -105,7 +111,7 @@ export async function GET(req: NextRequest) {
     const { data, error } = await resend.emails.send({
       from: "Portfolio Tracking <onboarding@resend.dev>",
       to: ["omkaarshenoyos@gmail.com"],
-      subject: `📊 Daily Report: ${visits.length} visits on ${yesterday.toLocaleDateString()}`,
+      subject: `📊 Daily Report: ${totalVisits} visits (${humanVisits} human) on ${yesterday.toLocaleDateString()}`,
       html: htmlContent,
     });
 

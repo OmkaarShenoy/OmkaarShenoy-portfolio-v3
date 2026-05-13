@@ -1,5 +1,6 @@
 import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";
+import { isbot } from "isbot";
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL!,
@@ -27,7 +28,7 @@ function parseUA(ua: string) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { url, referrer, screen, language, timezone, platform } = body;
+    const { url, referrer, screen, language, timezone, platform, visitorId, visitCount, campaign } = body;
 
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "127.0.0.1";
     let city = req.headers.get("x-vercel-ip-city");
@@ -54,11 +55,27 @@ export async function POST(req: NextRequest) {
     }
 
     const { browser, os } = parseUA(userAgentRaw);
+    const isBot = isbot(userAgentRaw);
+
+    let company = "Unknown";
+    try {
+      const isLocal = ip === "127.0.0.1" || ip === "::1" || ip.startsWith("192.168.") || ip.startsWith("10.");
+      if (!isLocal && !isBot) {
+        const orgRes = await fetch(`https://ipapi.co/${ip}/json/`);
+        const orgData = await orgRes.json();
+        if (orgData && orgData.org) {
+          company = orgData.org;
+        }
+      }
+    } catch (e) {
+      console.error("IP Enrichment failed:", e);
+    }
 
     const visitData = {
       timestamp: new Date().toISOString(),
       ip,
       location: `${city || "Unknown"}, ${region || "Unknown"}, ${country || "Unknown"}`,
+      company,
       device: `${os} (${browser})`,
       platform,
       timezone,
@@ -66,6 +83,10 @@ export async function POST(req: NextRequest) {
       referrer: referrer.includes(req.nextUrl.origin) ? "Internal" : referrer,
       screen,
       language,
+      isBot,
+      visitorId,
+      visitCount,
+      campaign,
     };
 
     const dateKey = `visits:${new Date().toISOString().split("T")[0]}`;

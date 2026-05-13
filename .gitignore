@@ -31,3 +31,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.env.local
+
+# AI tools
+.claude/
+
+# Test output
+test-out.css
+
+# Setup reports
+posthog-setup-report.md

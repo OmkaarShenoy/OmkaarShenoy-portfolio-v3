@@ -2,12 +2,26 @@ import { Redis } from "@upstash/redis";
 import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
 
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL!,
-  token: process.env.KV_REST_API_TOKEN!,
-});
+function getRedisClient() {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+  if (!url || !token) {
+    return null;
+  }
+
+  return new Redis({ url, token });
+}
+
+function getResendClient() {
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (!apiKey) {
+    return null;
+  }
+
+  return new Resend(apiKey);
+}
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
@@ -16,6 +30,17 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const redis = getRedisClient();
+    const resend = getResendClient();
+
+    if (!redis) {
+      return NextResponse.json({ error: "Missing Upstash Redis config" }, { status: 500 });
+    }
+
+    if (!resend) {
+      return NextResponse.json({ error: "Missing Resend API key" }, { status: 500 });
+    }
+
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const dateKey = `visits:${yesterday.toISOString().split("T")[0]}`;

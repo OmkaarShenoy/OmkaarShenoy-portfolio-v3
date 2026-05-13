@@ -3,15 +3,40 @@ import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
 import { getPostHogClient } from "@/lib/posthog-server";
 
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL!,
-  token: process.env.KV_REST_API_TOKEN!,
-});
+function getRedisClient() {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+  if (!url || !token) {
+    return null;
+  }
+
+  return new Redis({ url, token });
+}
+
+function getResendClient() {
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (!apiKey) {
+    return null;
+  }
+
+  return new Resend(apiKey);
+}
 
 export async function POST(req: NextRequest) {
   try {
+    const redis = getRedisClient();
+    const resend = getResendClient();
+
+    if (!redis) {
+      return NextResponse.json({ error: "Missing Upstash Redis config" }, { status: 500 });
+    }
+
+    if (!resend) {
+      return NextResponse.json({ error: "Missing Resend API key" }, { status: 500 });
+    }
+
     const { email, message } = await req.json();
 
     if (!email) {

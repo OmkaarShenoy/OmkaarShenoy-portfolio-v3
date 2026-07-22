@@ -1,0 +1,109 @@
+\documentclass[10pt]{article}
+  \usepackage{geometry}
+  \linespread{1}
+  \geometry{paperwidth=8in, paperheight=11in, margin=0.50in}
+  \usepackage{amsmath}
+  \usepackage{amssymb}
+  \usepackage{textcomp}
+  \usepackage[inline]{enumitem}
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+  \usepackage{hyperref}
+  \pagestyle{empty}
+  \raggedright
+  \input{glyphtounicode}
+\pdfgentounicode=1
+\newcommand{\lineunder} {
+    \vspace*{-10pt} \\
+    \hspace*{-18pt} \hrulefill \\
+    \vspace*{2pt}
+}
+\newcommand{\header} [1] {
+  \vspace*{2pt}
+    {\hspace*{-15pt}\textsc{#1}}
+    \lineunder
+}
+\begin{document}
+
+%==== Profile ====%
+\begin{center}
+  {\Huge Omkaar Shenoy} \\
+  Philadelphia, PA \;•\;
+  \href{mailto:omkaarshenoyos@gmail.com}{omkaarshenoyos@gmail.com} \;•\;
+  \href{https://omkaarshenoy.com}{omkaarshenoy.com} \;•\;
+  \href{https://www.linkedin.com/in/omkaarshenoy}{linkedin.com/in/omkaarshenoy}
+\end{center}
+
+\header{\textbf{Summary}}
+Product-minded data systems engineer building real-time analytics and operational systems. Experienced owning end-to-end workflows — from event tracking and ingestion to dashboards, alerts, and automation — and partnering with product and operations to ship measurable improvements quickly. Curious and hands-on; I iterate fast with stakeholders.
+
+\header{\textbf{Work Experience}}
+
+\textbf{Data Engineer}, \textit{Aramark} \hfill Philadelphia, PA \textbar{} May 2025--Present\\
+\begin{itemize}[leftmargin=5mm, itemsep=0mm]
+  \item Launched an anomaly-detection and alerting system (SQL + dbt-derived feeds) consumed by operations teams (1{,}000+ alerts/day); surfaced fraud and hardware-health issues, improving match accuracy by 35\% and reducing manual investigation time.
+  \item Built event-driven ingestion and processing systems (Snowpipe, Snowflake Streams, Azure Event Grid) that power near-real-time decision-making and operational workflows across 2{,}000+ locations, reducing data latency and enabling automated responses.
+  \item Consolidated fragmented reporting into a modular analytics platform (dbt) producing production-ready datasets and event feeds used for experimentation, automation, and operational visibility.
+  \item Translated ambiguous business problems into production systems by partnering with product, operations, and analytics; iterated on workflows and measurement based on stakeholder feedback.
+  \item Implemented monitoring and on-call support for core data systems and led rapid prototyping cycles to move fixes from concept to production under tight timelines.
+\end{itemize}
+
+\textbf{Software Engineer}, \textit{WebstaurantStore} \hfill Remote \textbar{} May 2024--May 2025\\
+\begin{itemize}[leftmargin=5mm, itemsep=0mm]
+  \item Delivered a test-automation and release platform (Java, Selenium Grid, Azure DevOps CI/CD) that increased release velocity and confidence, enabling faster feature rollouts while reducing regression cycles by 50\%.
+  \item Built validation queries and monitoring that caught production defects before release, lowering post-release defects and improving product quality.
+  \item Partnered with QA and engineering teams to define release-health metrics and improve visibility into deployment quality.
+\end{itemize}
+
+\textbf{Software Developer Intern}, \textit{National Public Radio (NPR)} \hfill Washington, DC \textbar{} June 2022--August 2022\\
+\begin{itemize}[leftmargin=5mm, itemsep=0mm]
+  \item Owned and launched the NPR One consumer landing page end-to-end using HTML5, CSS, and JavaScript; improved discoverability with structured metadata and conversion-focused CTAs reaching millions of users.
+  \item Shipped Apple Smart App Banner across large-scale PHP templates using feature flags and staged rollout to measure impact and reduce risk.
+  \item Deployed through Git workflows with Docker and Kubernetes pipelines and collaborated cross-functionally on release validation and instrumentation.
+\end{itemize}
+
+\header{\textbf{Products \& Projects}}
+
+\textbf{Portfolio Instrumentation \\& Insights} \hfill Personal Project \textbar{} \textit{TypeScript, PostHog, Next.js}\\
+\begin{itemize}[leftmargin=5mm, itemsep=0mm]
+  \item Implemented site-wide event tracking and an insights pipeline that surfaces user flows, conversion funnels, and engagement metrics to admin dashboards (events include `resume_clicked`, `wave_submitted`, `social_link_clicked`).
+  \item Built dashboards and lightweight alerts that improved visibility into experiments and content performance; routed anomalous behavior to a live admin feed for faster response.
+  \item Rapidly prototyped visualizations and shipped small experiments to production within days.
+\end{itemize}
+
+\textbf{HackKit — Real-time Hackathon Scoring} \hfill Open Source Project \textbar{} \textit{Node.js, MongoDB, Docker}\\
+\begin{itemize}[leftmargin=5mm, itemsep=0mm]
+  \item Designed and launched a real-time scoring product for hackathons; built aggregation pipelines and resilient MongoDB schemas to handle live scoring for 5{,}000+ participants with zero downtime.
+  \item Owned product requirements, judge workflows, and on-call reliability during events; instrumented metrics and dashboards to help organizers spot anomalies and optimize judging.
+\end{itemize}
+
+\textbf{justateit} \hfill Personal Project \textbar{} \textit{Full-stack (Next.js, iOS)}\\
+\begin{itemize}[leftmargin=5mm, itemsep=0mm]
+  \item Built an early-stage dish-tracking product focused on taste preferences and repeat-visit workflows; implemented front-end flows and backend event tracking to measure engagement and return-rate improvements. Live demo: \href{https://justateit.com/}{justateit.com}.
+\end{itemize}
+\textbf{wikigraph} \hfill Personal Project \textbar{} \textit{Data Viz, Nodes}\\
+\begin{itemize}[leftmargin=5mm, itemsep=0mm]
+  \item Built an interactive Wikipedia visualization that maps browsing sessions into node graphs; implemented front-end visualization and session tracking to surface browsing depth, content relationships, and engagement paths.
+\end{itemize}
+
+\header{\textbf{Leadership}}
+
+\textbf{Director}, \textit{sunhacks (ASU)} \hfill Tempe, AZ\\
+\begin{itemize}[leftmargin=5mm, itemsep=0mm]
+  \item Scaled ASU's flagship hackathon to \textbf{600 attendees (2$\times$ YoY growth)}; managed a \textbf{\$40K budget}, led \textbf{15} volunteers, and built scalable check-in and judging workflows from scratch.
+  \item Closed sponsorships with \textbf{Amazon}, \textbf{Garmin}, and \textbf{General Dynamics} through direct outreach and relationship-building.
+\end{itemize}
+
+\header{\textbf{Education}}
+\textbf{B.S. in Computer Science}, Minor in Media Arts and Sciences \hfill May 2025\\
+Arizona State University \hfill Tempe, AZ \textbar{} \textbf{GPA: 4.00}
+
+\header{\textbf{Technical Skills}}
+\textbf{Core:} SQL, Python, dbt, Snowflake, event-driven ingestion (Snowpipe, Event Grid)\\
+\textbf{Product Data:} event instrumentation, behavioral analytics, experimentation pipelines, real-time event processing, APIs\\
+\textbf{Infrastructure:} Azure, Docker, Kubernetes, CI/CD, monitoring and alerting\\
+\textbf{Platforms \& Storage:} PostgreSQL, SQL Server, MongoDB\\
+\textbf{Languages:} TypeScript, Java, Python\\
+\textbf{Other Tools:} Git, PostHog, Next.js
+
+\end{document}

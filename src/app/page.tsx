@@ -503,7 +503,7 @@ export default function Home() {
             onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
           >
             {!isLightMode && (
-              <div style={{ position: "absolute", top: "50%", left: "-90%", width: "180px", height: "280px", background: "linear-gradient(190deg, rgba(255,250,210,0.25) 0%, transparent 75%)", clipPath: "polygon(50% -32px, 0% 100%, 100% 100%)", transformOrigin: "top center", transform: "rotate(30deg)", pointerEvents: "none", zIndex: -1, filter: "blur(12px)", transition: "opacity 0.4s ease" }} />
+              <div style={{ position: "absolute", top: "50%", left: "calc(50% - 100px)", width: "180px", height: "280px", background: "linear-gradient(190deg, rgba(255,250,210,0.25) 0%, transparent 75%)", clipPath: "polygon(50% -32px, 0% 100%, 100% 100%)", transformOrigin: "top center", transform: "rotate(30deg)", pointerEvents: "none", zIndex: -1, filter: "blur(12px)", transition: "opacity 0.4s ease" }} />
             )}
             <img
               src="/images/lamp.webp"

@@ -9,6 +9,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Script from "next/script";
 import PostHogRouteShell from "@/components/posthog-route-shell";
+import WiderScreenBanner from "@/components/wider-screen-banner";
 
 
 const bricolage = Bricolage_Grotesque({
@@ -176,6 +177,8 @@ export default function RootLayout({
               <feColorMatrix type="saturate" values="0" />
             </filter>
           </svg>
+
+          <WiderScreenBanner />
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />

@@ -227,6 +227,13 @@
   }
 }
 
+/* ─── Wider-screen banner: keep content clear while it is visible on mobile ─── */
+@media (max-width: 767px) {
+  body.wider-screen-banner-pad {
+    padding-bottom: 3.25rem;
+  }
+}
+
 /* Target specific outside-work images to ensure both dimensions are preserved */
 img[src*="/images/outside-work/justateit.webp"],
 img[src*="/images/outside-work/backpacking.webp"],

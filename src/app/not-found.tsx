@@ -16,8 +16,7 @@ export default function NotFound() {
 
   useEffect(() => {
     setMounted(true);
-    const theme = document.documentElement.getAttribute("data-theme") || "dark";
-    setIsLightMode(theme === "light");
+    setIsLightMode(true);
   }, []);
 
   // Konami code Easter egg

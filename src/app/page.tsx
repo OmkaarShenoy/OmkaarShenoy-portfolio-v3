@@ -5,10 +5,8 @@ import { LOGO_SCRAPS, PERSONAL_SCRAPS } from "@/lib/data";
 import {
   ArrowUpRight, GithubLogo, LinkedinLogo, Envelope, CaretDown, GameController, SuitcaseSimple
 } from "@phosphor-icons/react";
-import { useEffect, useState, useRef, startTransition } from "react";
-import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import { gsap } from "gsap";
-import { Draggable } from "gsap/dist/Draggable";
 import posthog from "posthog-js";
 
 const CustomCursor = dynamic(
@@ -41,14 +39,11 @@ const ResumeModal = dynamic(
 );
 
 export default function Home() {
-  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loaderFinished, setLoaderFinished] = useState(false);
-  const isLightMode = !mounted ? false : resolvedTheme === "light";
-  const lampRef = useRef<HTMLButtonElement>(null);
-  const cablePathRef = useRef<SVGPathElement>(null);
+  const isLightMode = true;
   const [showLogos, setShowLogos] = useState(false);
   const [showOutside, setShowOutside] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -101,12 +96,6 @@ export default function Home() {
   }, [mounted, reduceMotion]);
 
   useEffect(() => {
-    let draggableInstances: Draggable[] = [];
-
-    if (typeof window !== "undefined") {
-      gsap.registerPlugin(Draggable);
-    }
-
     if (!loading && mounted && !reduceMotion) {
       // Fade out the opaque loader backdrop
       gsap.to(".loader-backdrop", {
@@ -142,54 +131,7 @@ export default function Home() {
         { scaleX: 1, duration: 0.8, ease: "power4.out", delay: 0.4 }
       );
     }
-
-    // ── ELASTIC LAMP DRAGGING ──
-    if (!isMobile && lampRef.current && cablePathRef.current && !reduceMotion) {
-      const anchorX = 108;
-      const anchorY = 32;
-
-      draggableInstances = Draggable.create(lampRef.current, {
-        type: "x,y",
-        onDrag: function () {
-          const rawX = this.x;
-          const rawY = this.y;
-          const dist = Math.sqrt(rawX * rawX + rawY * rawY);
-          const tension = 1 / (1 + dist * 0.003);
-          const actualX = rawX * tension;
-          const actualY = rawY * tension;
-          gsap.set(this.target, { x: actualX, y: actualY });
-
-          const lampBaseX = 37 + actualX;
-          const lampBaseY = 65 + actualY;
-          const cp1x = lampBaseX + 15;
-          const cp1y = lampBaseY + 30;
-          const cp2x = anchorX - 5;
-          const cp2y = anchorY + 35;
-          cablePathRef.current?.setAttribute("d", `M ${lampBaseX} ${lampBaseY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${anchorX} ${anchorY}`);
-        },
-        onDragEnd: function () {
-          posthog.capture("lamp_dragged");
-          gsap.to(this.target, {
-            x: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.5)", onUpdate: () => {
-              const x = gsap.getProperty(this.target, "x") as number;
-              const y = gsap.getProperty(this.target, "y") as number;
-              const lampBaseX = 37 + x;
-              const lampBaseY = 65 + y;
-              const cp1x = lampBaseX + 15;
-              const cp1y = lampBaseY + 30;
-              const cp2x = anchorX - 5;
-              const cp2y = anchorY + 35;
-              cablePathRef.current?.setAttribute("d", `M ${lampBaseX} ${lampBaseY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${anchorX} ${anchorY}`);
-            }
-          });
-        }
-      });
-    }
-
-    return () => {
-      draggableInstances.forEach((instance) => instance.kill());
-    };
-  }, [loading, mounted, isMobile, reduceMotion]);
+  }, [loading, mounted, reduceMotion]);
 
   const toggleLogos = () => {
     const next = !showLogos;
@@ -479,43 +421,6 @@ export default function Home() {
             isVisible={showOutside}
           />
         ))}
-
-        <nav className="animate-on-load" style={{ position: "fixed", top: isMobile ? "1.5rem" : "2rem", right: isMobile ? "1.5rem" : "2rem", zIndex: 1000, display: "flex", flexDirection: "row", gap: "1.5rem", pointerEvents: "auto" }} aria-label="Theme toggle">
-          {!isMobile && (
-            <svg style={{ position: "absolute", top: "0", left: "0", width: "150px", height: "150px", overflow: "visible", pointerEvents: "none", zIndex: 0 }}>
-              <rect x="106" y="24" width="8" height="16" rx="1" fill={isLightMode ? "rgba(17,17,17,0.15)" : "rgba(255,255,255,0.1)"} />
-              <path ref={cablePathRef} d="M 37 65 C 52 95, 103 67, 108 32" stroke={isLightMode ? "rgba(17,17,17,0.7)" : "rgba(255,255,255,0.4)"} strokeWidth="2.5" fill="none" strokeLinecap="round" />
-              <rect x="106" y="28" width="6" height="8" rx="1" fill={isLightMode ? "rgba(17,17,17,0.8)" : "rgba(255,255,255,0.5)"} />
-            </svg>
-          )}
-
-          <button
-            ref={lampRef}
-            title="Toggle Light Mode"
-            aria-label={`Switch to ${isLightMode ? "dark" : "light"} mode`}
-            onClick={() => {
-              const next = isLightMode ? "dark" : "light";
-              startTransition(() => setTheme(next));
-              window.setTimeout(() => posthog.capture("theme_toggled", { theme: next }), 0);
-            }}
-            style={{ background: "transparent", border: "none", padding: 0, cursor: "pointer", display: "block", position: "relative", zIndex: 1 }}
-            onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1) rotate(5deg)"}
-            onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
-          >
-            {!isLightMode && (
-              <div style={{ position: "absolute", top: "50%", left: "calc(50% - 100px)", width: "180px", height: "280px", background: "linear-gradient(190deg, rgba(255,250,210,0.25) 0%, transparent 75%)", clipPath: "polygon(50% -32px, 0% 100%, 100% 100%)", transformOrigin: "top center", transform: "rotate(30deg)", pointerEvents: "none", zIndex: -1, filter: "blur(12px)", transition: "opacity 0.4s ease" }} />
-            )}
-            <img
-              src="/images/lamp.webp"
-              alt="Light Mode"
-              width={isMobile ? 45 : 75}
-              height={isMobile ? 45 : 75}
-              loading="eager"
-              decoding="async"
-              style={{ position: "relative", zIndex: 1, objectFit: "contain", filter: isLightMode ? `drop-shadow(2px 4px 6px rgba(0,0,0,0.3)) ${showOutside ? 'sepia(0.3) saturate(1.2)' : ''}` : `drop-shadow(0 0 10px rgba(255,250,210,${showOutside ? '0.6' : '0.3'}))`, transition: "filter 1.2s ease-in-out" }}
-            />
-          </button>
-        </nav>
 
         {!isMobile && (
           <nav className="animate-on-load" style={{ position: "fixed", bottom: "1.5rem", left: "1.5rem", zIndex: 1000, display: "flex", gap: "1rem", alignItems: "center", pointerEvents: "auto", flexWrap: "wrap" }} aria-label="Social links">

@@ -169,7 +169,7 @@ export function ResumeModal({ isOpen, onClose, isLightMode }: ResumeModalProps) 
                 zIndex: 1,
                 backgroundColor: "transparent"
               }}
-              title="Omkaar Shenoy Resume"
+              title="omkaar shenoy  Resume"
             />
           </motion.div>
         </motion.div>

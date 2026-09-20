@@ -42,27 +42,27 @@ const instrumentSerif = Instrument_Serif({
 export const metadata: Metadata = {
   metadataBase: new URL("https://omkaarshenoy.com"),
   title: {
-    default: "Omkaar Shenoy | Data Engineer",
-    template: "%s | Omkaar Shenoy"
+    default: "omkaar shenoy | data engineer",
+    template: "%s | omkaar shenoy "
   },
-  description: "Omkaar Shenoy is a Data Engineer based in Philadelphia building data infrastructure at scale. Specialized in Snowflake, dbt, Azure, and Python.",
-  keywords: ["Data Engineer", "Philadelphia", "Omkaar Shenoy", "Snowflake", "dbt", "Azure", "Python", "Data Infrastructure", "Software Engineer"],
+  description: "omkaar shenoy  is a Data Engineer based in Philadelphia building data infrastructure at scale. Specialized in Snowflake, dbt, Azure, and Python.",
+  keywords: ["Data Engineer", "Philadelphia", "omkaar shenoy ", "Snowflake", "dbt", "Azure", "Python", "Data Infrastructure", "Software Engineer"],
   icons: {
     icon: "/images/favicon.webp",
   },
-  authors: [{ name: "Omkaar Shenoy", url: "https://omkaarshenoy.com" }],
-  creator: "Omkaar Shenoy", 
+  authors: [{ name: "omkaar shenoy ", url: "https://omkaarshenoy.com" }],
+  creator: "omkaar shenoy ", 
   openGraph: {
-    title: "Omkaar Shenoy | Data Engineer",
+    title: "omkaar shenoy | data engineer",
     description: "Data Engineer based in Philadelphia building data infrastructure at scale.",
     url: "https://omkaarshenoy.com",
-    siteName: "Omkaar Shenoy Portfolio",
+    siteName: "omkaar shenoy  Portfolio",
     images: [
       {
         url: "/images/og-image.webp",
         width: 1024,
         height: 536,
-        alt: "Omkaar Shenoy - Data Engineer Portfolio",
+        alt: "omkaar shenoy  - Data Engineer Portfolio",
       },
     ],
     locale: "en_US",
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Omkaar Shenoy | Data Engineer",
+    title: "omkaar shenoy | data engineer",
     description: "Data Engineer based in Philadelphia building data infrastructure at scale.",
     images: ["/images/og-image.webp"],
   },
@@ -96,7 +96,7 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "Person",
     "@id": "https://omkaarshenoy.com/#person",
-    "name": "Omkaar Shenoy",
+    "name": "omkaar shenoy ",
     "givenName": "Omkaar",
     "familyName": "Shenoy",
     "jobTitle": "Data Engineer",
@@ -120,7 +120,7 @@ export default function RootLayout({
       "@type": "Organization",
       "name": "Aramark"
     },
-    "description": "Omkaar Shenoy is a Data Engineer based in Philadelphia building data infrastructure at scale.",
+    "description": "omkaar shenoy  is a Data Engineer based in Philadelphia building data infrastructure at scale.",
     "image": "https://omkaarshenoy.com/images/og-image.webp",
     "knowsAbout": ["Data Engineering", "Data Infrastructure", "Snowflake", "dbt", "Azure", "Python", "SQL", "Docker", "Kubernetes", "PostgreSQL", "MongoDB", "Java", "Software Engineering"]
   };
@@ -132,7 +132,7 @@ export default function RootLayout({
   try {
     const files = fs.readdirSync(backgroundsDir);
     backgroundImages = files
-      .filter(file => /\.(webp|mp4|webm|mov)$/i.test(file))
+      .filter(file => /\.(webp|jpe?g|mp4|webm|mov)$/i.test(file))
       .sort()
       .map(file => `/images/backgrounds/${file}`);
   } catch (error) {
@@ -159,7 +159,7 @@ export default function RootLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem={false}
           disableTransitionOnChange
         >

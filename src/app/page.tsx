@@ -234,7 +234,7 @@ export default function Home() {
           pointerEvents: "none"
         }} />
 
-        <h1 className="sr-only">Omkaar Shenoy - Data Engineer based in Philadelphia</h1>
+        <h1 className="sr-only">omkaar shenoy  - Data Engineer based in Philadelphia</h1>
 
         <svg style={{ position: "absolute", width: 0, height: 0, pointerEvents: "none" }} aria-hidden="true">
           <defs>
@@ -276,7 +276,7 @@ export default function Home() {
                 opacity: 1, 
                 transition: "opacity 0.2s ease" 
               }}>
-                Omkaar Shenoy.
+                omkaar shenoy .
                 
                 <span className="hero-underline" style={{ 
                   position: "absolute", 

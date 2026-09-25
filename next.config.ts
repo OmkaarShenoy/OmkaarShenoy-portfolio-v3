@@ -7,8 +7,8 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/profilepic.webp",
-        destination: "/images/OmkaarShenoy.webp",
+        source: "/profilepic.jpg",
+        destination: "/images/OmkaarShenoy.jpg",
       },
       {
         source: "/ingest/static/:path*",

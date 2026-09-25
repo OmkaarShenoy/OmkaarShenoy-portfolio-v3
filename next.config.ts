@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/profilepic",
+        source: "/profilepic.webp",
         destination: "/images/OmkaarShenoy.webp",
       },
       {
